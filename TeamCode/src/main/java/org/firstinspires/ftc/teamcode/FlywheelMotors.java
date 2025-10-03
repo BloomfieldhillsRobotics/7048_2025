@@ -60,6 +60,20 @@ public class FlywheelMotors extends LinearOpMode {
             flywheelRight.setPower(motorPower);
             intakeMotor.setPower(motorintakePower);
 
+            if (gamepad1.x) {
+                liftServo.setPosition(LIFT_DOWN_POS); // Move lift down
+                intakeMotor.setPower(0.7); //Have intake go
+                sleep(2000); // Wait for 2 seconds
+                liftServo.setPosition(LIFT_UP_POS); // Move lift up
+                intakeMotor.setPower(0); //stop the intake motor
+                flywheelLeft.setPower(-1); //start up the flywheel motors
+                flywheelRight.setPower(-1); //start up the flywheel motors
+                sleep(2000); // Wait for 2 seconds
+                flywheelLeft.setPower(0); //stop the flywheel motors
+                flywheelRight.setPower(0); //stop the flywheel motors
+                liftServo.setPosition(LIFT_DOWN_POS); // Move lift down
+            }
+
 
             // Example: Control lift with gamepad 'a' and 'b' buttons
             if (gamepad1.a) {
