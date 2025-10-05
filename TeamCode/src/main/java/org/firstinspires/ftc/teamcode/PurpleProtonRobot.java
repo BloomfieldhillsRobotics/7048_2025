@@ -10,6 +10,14 @@ import dev.nextftc.core.subsystems.SubsystemGroup;
 public class PurpleProtonRobot extends SubsystemGroup {
     public static final PurpleProtonRobot INSTANCE = new PurpleProtonRobot();
 
+    private PurpleProtonRobot() {
+        super(
+                Intake.INSTANCE,
+                FlyWheel.INSTANCE,
+                Elevator.INSTANCE
+        );
+    }
+
     public final Command intakeStop =
             new SequentialGroup(
                     Intake.INSTANCE.stop
@@ -17,7 +25,7 @@ public class PurpleProtonRobot extends SubsystemGroup {
     public final Command intakeRun =
             new SequentialGroup(
                     Intake.INSTANCE.run
-            ).named("IntakeStop");
+            ).named("IntakeRun");
     public final Command intake =
             new SequentialGroup(
                     Elevator.INSTANCE.down,
@@ -25,14 +33,28 @@ public class PurpleProtonRobot extends SubsystemGroup {
             ).named("Intake");
     public final Command shoot =
             new SequentialGroup(
+                    Intake.INSTANCE.stop,
                     FlyWheel.INSTANCE.run,
                     Elevator.INSTANCE.up,
-                    Intake.INSTANCE.stop
+                    new Delay(4),
+                    FlyWheel.INSTANCE.stop
             ).named("Shoot");
+
+    public final Command FlyWheelRun =
+            new SequentialGroup(
+                    FlyWheel.INSTANCE.run
+            ).named("FlyWheelRun");
+
+    public final Command FlyWheelStop =
+            new SequentialGroup(
+                    FlyWheel.INSTANCE.stop
+            ).named("FlyWheelStop");
+
     public final Command score =
             new SequentialGroup(
                     intake,
                     new Delay(2),
+                    intakeStop,
                     shoot
             ).named("Score");
     public final Command elevatorUp =

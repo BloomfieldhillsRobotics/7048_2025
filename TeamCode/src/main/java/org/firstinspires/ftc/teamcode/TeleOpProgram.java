@@ -1,46 +1,51 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-
+import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
-import dev.nextftc.extensions.pedro.PedroComponent;
-import dev.nextftc.extensions.pedro.PedroDriverControlled;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
-import dev.nextftc.hardware.driving.DriverControlledCommand;
+import dev.nextftc.hardware.driving.MecanumDriverControlled;
+import dev.nextftc.hardware.impl.MotorEx;
 
-@TeleOp(name = "NextFTC TeleOp Using PP")
+@TeleOp(name = "Los Protos")
 public class TeleOpProgram extends NextFTCOpMode {
     public TeleOpProgram() {
         addComponents(
                 new SubsystemComponent(PurpleProtonRobot.INSTANCE),
                 BulkReadComponent.INSTANCE,
-                BindingsComponent.INSTANCE,
-                new PedroComponent(Constants::createFollower)
+                BindingsComponent.INSTANCE
         );
     }
-
+    private final MotorEx frontLeftMotor = new MotorEx("front left").reversed();
+    private final MotorEx frontRightMotor = new MotorEx("front right").reversed();
+    private final MotorEx backLeftMotor = new MotorEx("back left");
+    private final MotorEx backRightMotor = new MotorEx("back right").reversed();
     @Override
     public void onStartButtonPressed() {
-        DriverControlledCommand driverControlled = new PedroDriverControlled(
+        Command driverControlled = new MecanumDriverControlled(
+                frontLeftMotor,
+                frontRightMotor,
+                backLeftMotor,
+                backRightMotor,
                 Gamepads.gamepad1().leftStickY(),
                 Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().rightStickX(),
-                false
+                Gamepads.gamepad1().rightStickX()
         );
         driverControlled.schedule();
-        Gamepads.gamepad2().a()
+        Gamepads.gamepad1().a()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.intakeRun)
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.intakeStop);
-        Gamepads.gamepad2().x()
+        Gamepads.gamepad1().x()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.score);
-        Gamepads.gamepad2().y()
+        Gamepads.gamepad1().y()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.elevatorUp);
-        Gamepads.gamepad2().b()
+        Gamepads.gamepad1().b()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.elevatorDown);
+        Gamepads.gamepad1().rightBumper()
+                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.FlyWheelRun)
+                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
     }
 }
