@@ -6,6 +6,7 @@ import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.localization.Encoder;
+import com.pedropathing.ftc.localization.constants.DriveEncoderConstants;
 import com.pedropathing.ftc.localization.constants.TwoWheelConstants;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -26,27 +27,38 @@ public class Constants {
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
-    public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
-            .forwardEncoder_HardwareMapName("ododrive")
-            .strafeEncoder_HardwareMapName("odoswerve")
-            .strafeEncoderDirection(Encoder.REVERSE)
-            .forwardEncoderDirection(Encoder.REVERSE)
-            .forwardTicksToInches(-0.00201)
-            .strafeTicksToInches(-0.0114)
-//            .turnTicksToInches(1.32)
-            .IMU_HardwareMapName("imu")
-            .IMU_Orientation(
-                    new RevHubOrientationOnRobot(
-                            RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                            RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
-                    )
-            );
+    public static DriveEncoderConstants localizerConstants = new DriveEncoderConstants()
+            .rightFrontMotorName("front right")
+            .rightRearMotorName("back right")
+            .leftRearMotorName("back left")
+            .leftFrontMotorName("front left")
+            .leftFrontEncoderDirection(Encoder.REVERSE)
+            .leftRearEncoderDirection(Encoder.REVERSE)
+            .rightFrontEncoderDirection(Encoder.FORWARD)
+            .rightRearEncoderDirection(Encoder.FORWARD);
+
+//    public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
+//            .forwardEncoder_HardwareMapName("ododrive")
+//            .strafeEncoder_HardwareMapName("odoswerve")
+//            .strafeEncoderDirection(Encoder.REVERSE)
+//            .forwardEncoderDirection(Encoder.REVERSE)
+//            .forwardTicksToInches(-0.00201)
+//            .strafeTicksToInches(-0.0114)
+////            .turnTicksToInches(1.32)
+//            .IMU_HardwareMapName("imu")
+//            .IMU_Orientation(
+//                    new RevHubOrientationOnRobot(
+//                            RevHubOrientationOnRobot.LogoFacingDirection.UP,
+//                            RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+//                    )
+//            );
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
+                .driveEncoderLocalizer(localizerConstants)
                 .mecanumDrivetrain(driveConstants)
-                .twoWheelLocalizer(localizerConstants)
+//                .twoWheelLocalizer(localizerConstants)
                 .build();
     }
 }

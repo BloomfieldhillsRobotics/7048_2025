@@ -6,6 +6,25 @@ This module, TeamCode, is the place where you will write/paste the code for your
 robot controller App. This module is currently empty (a clean slate) but the
 process for adding OpModes is straightforward.
 
+## BHR Examples
+### TeleOpProgram
+showcases the usage of command based programing with Pedro Pathing using multiple classes together.
+Each class defines commands like "elevatorUp" which are all then referenced in the PurpleProtonRobot.
+### PurpleProtonRobot
+Includes command sequences like score (lift elevator down, intake run, pause, lift elevator up, 
+flywheels run).
+### Commands referenced in PurpleProtonRobot
+References all the subfolders that are beneficial for the overall programming of robot.
+#### PedroPathing Folder
+Includes a constants class that is specific to each robot.  It's currently configured for
+encoder only localization
+#### Elevator
+Uses a servo to lift up a platform to move a artifact up towards the flyweheel
+#### Intake
+Runs a motor that spins to capture an artifact.
+#### Flywheel
+Uses a motorgroup: two motors that are used to shoot an artifact,
+
 ## Creating your own OpModes
 
 The easiest way to create your own OpMode is to copy a Sample OpMode and make it your own.
