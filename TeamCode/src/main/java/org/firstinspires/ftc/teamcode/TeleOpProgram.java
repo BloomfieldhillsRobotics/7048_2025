@@ -31,20 +31,20 @@ public class TeleOpProgram extends NextFTCOpMode {
                 backLeftMotor,
                 backRightMotor,
                 Gamepads.gamepad1().leftStickY(),
-                Gamepads.gamepad1().leftStickX(),
+                () -> -Gamepads.gamepad1().leftStickX().get(),  //todo fix so we don't use negative
                 Gamepads.gamepad1().rightStickX()
         );
         driverControlled.schedule();
-        Gamepads.gamepad1().a()
+        Gamepads.gamepad2().a()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.intakeRun)
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.intakeStop);
-        Gamepads.gamepad1().x()
+        Gamepads.gamepad2().x()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.score);
-        Gamepads.gamepad1().y()
+        Gamepads.gamepad2().y()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.elevatorUp);
-        Gamepads.gamepad1().b()
+        Gamepads.gamepad2().b()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.elevatorDown);
-        Gamepads.gamepad1().rightBumper()
+        Gamepads.gamepad2().rightBumper()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.FlyWheelRun)
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
     }
