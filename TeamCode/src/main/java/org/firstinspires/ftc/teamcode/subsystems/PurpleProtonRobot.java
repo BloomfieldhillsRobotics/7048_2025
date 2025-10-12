@@ -1,6 +1,6 @@
 
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
@@ -17,7 +17,6 @@ public class PurpleProtonRobot extends SubsystemGroup {
                 Elevator.INSTANCE
         );
     }
-
     public final Command intakeStop =
             new SequentialGroup(
                     Intake.INSTANCE.stop
