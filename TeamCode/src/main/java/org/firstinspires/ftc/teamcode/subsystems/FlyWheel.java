@@ -13,6 +13,6 @@ public class FlyWheel implements Subsystem {
             new MotorEx("FlywheelRight"),
             new MotorEx("FlywheelLeft").reversed()
     );
-    public Command run = new SetPower(FlyWheelGroup,1).requires(this);
+    public Command run = new SetPower(FlyWheelGroup,.6).requires(this);
     public Command stop = new SetPower(FlyWheelGroup,0).requires(this);
 }
