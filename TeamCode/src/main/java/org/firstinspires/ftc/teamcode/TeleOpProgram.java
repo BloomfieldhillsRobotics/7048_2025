@@ -28,25 +28,25 @@ public class TeleOpProgram extends NextFTCOpMode {
     private final MotorEx backLeftMotor = new MotorEx("back left");
     private final MotorEx backRightMotor = new MotorEx("back right").reversed();
 
-    private HuskyLensTagDetector tagDetector;
+//    private HuskyLensTagDetector tagDetector;
 
     @Override
     public void onInit() {
-        tagDetector = new HuskyLensTagDetector(hardwareMap, "huskylense");
-        telemetry.addData("camear Status", "Initialized Point Huskylens at tag");
+//        tagDetector = new HuskyLensTagDetector(hardwareMap, "huskylense");
+//        telemetry.addData("camear Status", "Initialized Point Huskylens at tag");
     }
     public void onUpdate() {
-        tagDetector.scanForTags();
-        // Check if a tag was found and report its info
-        if (tagDetector.tagWasDetected()) {
-            telemetry.addData("Tag Detected!", "");
-            telemetry.addData("ID", tagDetector.getDetectedTagId());
-            telemetry.addData("Position", "X: %d, Y: %d", tagDetector.getDetectedTagX(), tagDetector.getDetectedTagY());
-            telemetry.addData("Size", "Width: %d, Height: %d", tagDetector.getDetectedTagWidth(), tagDetector.getDetectedTagHeight());
-        } else {
-            telemetry.addData("No Tag Detected", "");
-        }
-        telemetry.update();
+//        tagDetector.scanForTags();
+//        // Check if a tag was found and report its info
+//        if (tagDetector.tagWasDetected()) {
+//            telemetry.addData("Tag Detected!", "");
+//            telemetry.addData("ID", tagDetector.getDetectedTagId());
+//            telemetry.addData("Position", "X: %d, Y: %d", tagDetector.getDetectedTagX(), tagDetector.getDetectedTagY());
+//            telemetry.addData("Size", "Width: %d, Height: %d", tagDetector.getDetectedTagWidth(), tagDetector.getDetectedTagHeight());
+//        } else {
+//            telemetry.addData("No Tag Detected", "");
+//        }
+//        telemetry.update();
     }
     public void onStartButtonPressed() {
         Command driverControlled = new MecanumDriverControlled(
@@ -59,17 +59,25 @@ public class TeleOpProgram extends NextFTCOpMode {
                 Gamepads.gamepad1().rightStickX()
         );
         driverControlled.schedule();
-        Gamepads.gamepad2().a()
+        Gamepads.gamepad2().b()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.intakeRun)
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.intakeStop);
-        Gamepads.gamepad2().x()
-                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.score);
-        Gamepads.gamepad2().y()
-                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.elevatorUp);
-        Gamepads.gamepad2().b()
+        Gamepads.gamepad2().a()
+                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.runIntakeBackwards)
+                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.runIntakeBackwards);
+        Gamepads.gamepad2().dpadUp()
+                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.elevatorUp)
+                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.elevatorDown);
+        Gamepads.gamepad2().dpadDown()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.elevatorDown);
         Gamepads.gamepad2().rightBumper()
-                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.FlyWheelRun)
+                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.ShortShot)
+                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
+        Gamepads.gamepad2().leftBumper()
+                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.longshot)
+                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
+        Gamepads.gamepad2().x()
+                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.superlongshot)
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
     }
 }

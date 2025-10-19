@@ -13,6 +13,9 @@ public class FlyWheel implements Subsystem {
             new MotorEx("FlywheelRight"),
             new MotorEx("FlywheelLeft").reversed()
     );
-    public Command run = new SetPower(FlyWheelGroup,.6).requires(this);
+    public Command superlongshot = new SetPower(FlyWheelGroup,.75).requires(this);
+
+    public Command longshot = new SetPower(FlyWheelGroup,.7).requires(this);
+    public Command shortshot = new SetPower(FlyWheelGroup,.6).requires(this);
     public Command stop = new SetPower(FlyWheelGroup,0).requires(this);
 }
