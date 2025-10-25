@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -22,9 +25,10 @@ public class TeleOpProgram extends NextFTCOpMode {
     }
 
 //    private HuskyLensTagDetector tagDetector;
-
+private final Pose startPose = new Pose(0, 0, Math.toRadians(0));
     @Override
     public void onInit() {
+        follower.setStartingPose(startPose);
     }
     public void onUpdate() {
     }
