@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
@@ -23,6 +26,7 @@ import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
 
 
 @TeleOp(name = "Los Protos")
+@Configurable //Panels
 public class TeleOpProgram extends NextFTCOpMode {
 
     public TeleOpProgram() {
@@ -34,13 +38,15 @@ public class TeleOpProgram extends NextFTCOpMode {
         );
     }
     DriverControlledCommand driverControlled = new PedroDriverControlled(
-            Gamepads.gamepad1().leftStickY(),
-            Gamepads.gamepad1().leftStickX(),
-            Gamepads.gamepad1().rightStickX()
+            () -> -Gamepads.gamepad1().leftStickY().get(),
+            () -> -Gamepads.gamepad1().leftStickX().get(),
+            () -> -Gamepads.gamepad1().rightStickX().get()
     );
+
+    private TelemetryManager telemetryM;
 //    private HuskyLensTagDetector tagDetector;
     private final Pose startPose = new Pose(0,0, Math.toRadians(0));
-    private final Pose shootPose = new Pose(88.0, 8.0, Math.toRadians(0.0));
+    private final Pose shootPose = new Pose(56, 8.0, Math.toRadians(0.0));
     //path to pick up PPG motif
     private final Pose pickUpPPG = new Pose(127.7, 83.0, Math.toRadians(0.0));
     private final Pose pickUpPPGcontrol = new Pose(76.6, 91.0, Math.toRadians(0.0));
@@ -56,6 +62,7 @@ public class TeleOpProgram extends NextFTCOpMode {
     //PPG path chains
     private PathChain PPGfirst;
     private PathChain PPGsecond;
+    private PathChain ShootPosition;
     //PGP path chains
     private PathChain PGPfirst;
     private PathChain PGPsecond;
@@ -72,6 +79,10 @@ public class TeleOpProgram extends NextFTCOpMode {
         //PGP paths
         PPGfirst = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierCurve(shootPose, pickUpPPGcontrol, pickUpPPG))
+                .setConstantHeadingInterpolation(0.0)
+                .build();
+        ShootPosition = PedroComponent.follower().pathBuilder()
+                .addPath(new BezierCurve(shootPose))
                 .setConstantHeadingInterpolation(0.0)
                 .build();
         PPGsecond = PedroComponent.follower().pathBuilder()
@@ -108,8 +119,11 @@ public class TeleOpProgram extends NextFTCOpMode {
     }
     public Command getPPG() {
         return new SequentialGroup(
-                new FollowPath(PPGfirst),
-                new FollowPath(PPGsecond),
+                new FollowPath(PPGfirst), //go to front of artifacts
+                PurpleProtonRobot.INSTANCE.intakeRun, //intake on
+                new FollowPath(PPGsecond), //
+                PurpleProtonRobot.INSTANCE.intakeStop, //intake off
+                PurpleProtonRobot.INSTANCE.shoot,//shoot the ball
                 new FollowPath(HumanPlayer),
                 new FollowPath(ShootAgain)
         );
@@ -117,6 +131,11 @@ public class TeleOpProgram extends NextFTCOpMode {
     @Override public void onInit() {
         buildPaths();
         PedroComponent.follower().setStartingPose(startPose);
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+    }
+    @Override public void onUpdate() {
+        // Update Pedro Pathing and Panels every iteration
+        PedroComponent.follower().update();
     }
     public void onStartButtonPressed() {
         driverControlled.schedule();
