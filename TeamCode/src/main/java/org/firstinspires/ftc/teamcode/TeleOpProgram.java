@@ -51,7 +51,7 @@ public class TeleOpProgram extends NextFTCOpMode {
     //path to setup GPP pickup
     private final Pose PickupGPPFirst = new Pose(48,35, Math.toRadians(180));
     //Pickup GPP
-    private final Pose PickupGPPSecond = new Pose(9,36, Math.toRadians(180));
+    private final Pose PickupGPPSecond = new Pose(20,36, Math.toRadians(180));
     //Avoid Obstacles
     private final Pose PickupGppAvoidObstacles = new Pose(69,47,Math.toRadians(180));
     //Return to Base
@@ -69,12 +69,11 @@ public class TeleOpProgram extends NextFTCOpMode {
         PickupGPPFirstPath = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierCurve(PedroComponent.follower().getPose(), PickupGPPFirst))
                 .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), PickupGPPFirst.getHeading())
-                .setGlobalDeceleration(.5)
+                .setGlobalDeceleration(.1)
                 .build();
         PickupGPPSecondPath = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierCurve(PedroComponent.follower().getPose(), PickupGPPSecond))
-                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), PickupGPPSecond.getHeading())
-                .setGlobalDeceleration(.5)
+                .addPath(new BezierCurve(PickupGPPFirst, PickupGPPSecond))
+                .setGlobalDeceleration(.025)
                 .build();
         PathPickupGppAvoidObstacles = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierCurve(PedroComponent.follower().getPose(), PickupGppAvoidObstacles))
@@ -95,23 +94,23 @@ public class TeleOpProgram extends NextFTCOpMode {
 
     public Command getGPP() {
         return new SequentialGroup(
+                PurpleProtonRobot.INSTANCE.elevatorDown,
                 new FollowPath(PickupGPPFirstPath),
-                new Delay(5),
+                new Delay(1),
                 PurpleProtonRobot.INSTANCE.intakeRun,
-                new Delay(5),
+                new Delay(1),
                 new FollowPath(PickupGPPSecondPath),
-                new Delay(5),
+                new Delay(1),
                 PurpleProtonRobot.INSTANCE.intakeStop,
-                new Delay(5),
+                new Delay(1),
                 new FollowPath(PathPickupGppAvoidObstacles),
-                new Delay(5),
+                new Delay(1),
                 new FollowPath(PickupGPPShoot),
-                new Delay(5),
-                PurpleProtonRobot.INSTANCE.elevatorUp,
-                new Delay(5),
-
+                new Delay(1),
                 PurpleProtonRobot.INSTANCE.shoot,
-                new Delay(5),
+                PurpleProtonRobot.INSTANCE.shoot,
+                PurpleProtonRobot.INSTANCE.shoot,
+                PurpleProtonRobot.INSTANCE.intakeStop,
                 new FollowPath(GPPReturnToBase)
         );
     }

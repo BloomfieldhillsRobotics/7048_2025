@@ -32,11 +32,19 @@ public class PurpleProtonRobot extends SubsystemGroup {
             ).named("Intake");
     public final Command shoot =
             new SequentialGroup(
+                    Elevator.INSTANCE.down,
+                    new Delay(.5),
+                    Intake.INSTANCE.run,
+                    new Delay(.5),
                     Intake.INSTANCE.stop,
+                    new Delay(.5),
                     FlyWheel.INSTANCE.shortshot,
+                    new Delay(.5),
                     Elevator.INSTANCE.up,
-                    new Delay(4),
-                    FlyWheel.INSTANCE.stop
+                    new Delay(.5),
+                    FlyWheel.INSTANCE.stop,
+                    new Delay(.5),
+                    Elevator.INSTANCE.down
             ).named("Shoot");
 
     public final Command ShortShot =
