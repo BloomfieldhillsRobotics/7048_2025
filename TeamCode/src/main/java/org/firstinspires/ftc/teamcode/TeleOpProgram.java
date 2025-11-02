@@ -67,11 +67,12 @@ public class TeleOpProgram extends NextFTCOpMode {
                 .build();}
     public Command getPPG() {
         return new SequentialGroup(
-                new FollowPath(PPGfirst), //go to front of artifacts
-                PurpleProtonRobot.INSTANCE.intakeRun, //intake on
-                new FollowPath(PPGsecond), //
-                PurpleProtonRobot.INSTANCE.intakeStop, //intake off
-                PurpleProtonRobot.INSTANCE.shoot
+                new FollowPath(PPGfirst)
+//                , //go to front of artifacts
+//                PurpleProtonRobot.INSTANCE.intakeRun, //intake on
+//                new FollowPath(PPGsecond), //
+//                PurpleProtonRobot.INSTANCE.intakeStop, //intake off
+//                PurpleProtonRobot.INSTANCE.shoot
         );
     }
     @Override public void onInit() {

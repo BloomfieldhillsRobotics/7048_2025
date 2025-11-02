@@ -33,15 +33,15 @@ public class Constants {
             .strafePodX(0)
             .forwardEncoder_HardwareMapName("FlywheelLeft")
             .strafeEncoder_HardwareMapName("FlywheelRight")
-            .strafeEncoderDirection(Encoder.REVERSE)
-            .forwardEncoderDirection(Encoder.FORWARD)
+            .strafeEncoderDirection(Encoder.FORWARD)
+            .forwardEncoderDirection(Encoder.REVERSE)
             .forwardTicksToInches(0.002038338057)
             .strafeTicksToInches(0.0019700338663306)
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(
                     new RevHubOrientationOnRobot(
-                            RevHubOrientationOnRobot.LogoFacingDirection.DOWN,
-                            RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD
+                            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                            RevHubOrientationOnRobot.UsbFacingDirection.UP
                     )
             );
 
