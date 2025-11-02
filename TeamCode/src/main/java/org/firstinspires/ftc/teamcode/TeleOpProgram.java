@@ -45,100 +45,46 @@ public class TeleOpProgram extends NextFTCOpMode {
 
     private TelemetryManager telemetryM;
 //    private HuskyLensTagDetector tagDetector;
-    private final Pose startPose = new Pose(0,0, Math.toRadians(0));
-    private final Pose shootPose = new Pose(56, 8.0, Math.toRadians(0.0));
+    private final Pose startPose = new Pose(56,8, Math.toRadians(0));
+    private final Pose shootPose = new Pose(48, 95, Math.toRadians(180));
     //path to pick up PPG motif
-    private final Pose pickUpPPG = new Pose(127.7, 83.0, Math.toRadians(0.0));
-    private final Pose pickUpPPGcontrol = new Pose(76.6, 91.0, Math.toRadians(0.0));
+    private final Pose pickUpPPG = new Pose(42, 35, Math.toRadians(180));
+    private final Pose pickUpPPGcontrol = new Pose(14.5, 35, Math.toRadians(180));
     //path to pick up PGP motif
-    private final Pose pickUpPGP = new Pose(127.7, 59.0, Math.toRadians(0.0));
-    private final Pose pickUpPGPcontrol = new Pose(79.29, 64.7, Math.toRadians(0.0));
-    //path to pick up GPP motif
-    private final Pose pickUpGPP = new Pose(127.7, 59.0, Math.toRadians(0.0));
-    private final Pose pickUpGPPcontrol = new Pose(82.5, 39.3, Math.toRadians(0.0));
-    private final Pose pickUPhp = new Pose(140.0, 8.2, Math.toRadians(0.0));
-
 
     //PPG path chains
     private PathChain PPGfirst;
     private PathChain PPGsecond;
-    private PathChain ShootPosition;
-    //PGP path chains
-    private PathChain PGPfirst;
-    private PathChain PGPsecond;
-
-    //GPP path chains
-    private PathChain GPPfirst;
-    private PathChain GPPsecond;
-
-    //Universal path chains
-    private PathChain HumanPlayer;
-    private PathChain ShootAgain;
-
     private void buildPaths() {
         //PGP paths
         PPGfirst = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierCurve(shootPose, pickUpPPGcontrol, pickUpPPG))
-                .setConstantHeadingInterpolation(0.0)
-                .build();
-        ShootPosition = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierCurve(shootPose))
+                .addPath(new BezierCurve(startPose, pickUpPPGcontrol, pickUpPPG))
                 .setConstantHeadingInterpolation(0.0)
                 .build();
         PPGsecond = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(pickUpPPG, shootPose))
                 .setConstantHeadingInterpolation(0.0)
-                .build();
-        //PPG paths
-        PGPfirst = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierCurve(shootPose, pickUpPGPcontrol, pickUpPGP))
-                .setConstantHeadingInterpolation(0.0)
-                .build();
-        PGPsecond = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickUpPGP, shootPose))
-                .setConstantHeadingInterpolation(0.0)
-                .build();
-        //GPP paths
-        GPPfirst = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierCurve(shootPose, pickUpGPPcontrol, pickUpGPP))
-                .setConstantHeadingInterpolation(0.0)
-                .build();
-        GPPsecond = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickUpGPP, shootPose))
-                .setConstantHeadingInterpolation(0.0)
-                .build();
-        //Universal paths
-        HumanPlayer = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(shootPose, pickUPhp))
-                .setConstantHeadingInterpolation(0.0)
-                .build();
-        ShootAgain = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickUPhp, shootPose))
-                .setConstantHeadingInterpolation(0.0)
-                .build();
-    }
+                .build();}
     public Command getPPG() {
         return new SequentialGroup(
                 new FollowPath(PPGfirst), //go to front of artifacts
                 PurpleProtonRobot.INSTANCE.intakeRun, //intake on
                 new FollowPath(PPGsecond), //
                 PurpleProtonRobot.INSTANCE.intakeStop, //intake off
-                PurpleProtonRobot.INSTANCE.shoot,//shoot the ball
-                new FollowPath(HumanPlayer),
-                new FollowPath(ShootAgain)
+                PurpleProtonRobot.INSTANCE.shoot
         );
     }
     @Override public void onInit() {
         buildPaths();
-        PedroComponent.follower().setStartingPose(startPose);
-        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+//        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
     }
     @Override public void onUpdate() {
         // Update Pedro Pathing and Panels every iteration
-        PedroComponent.follower().update();
+//        PedroComponent.follower().update();
     }
     public void onStartButtonPressed() {
         driverControlled.schedule();
+        PedroComponent.follower().setStartingPose(startPose);
         Gamepads.gamepad1().a()
                 .whenBecomesTrue(getPPG());
         Gamepads.gamepad2().b()
@@ -154,6 +100,7 @@ public class TeleOpProgram extends NextFTCOpMode {
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.elevatorDown);
         Gamepads.gamepad2().rightBumper()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.ShortShot)
+
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
         Gamepads.gamepad2().leftBumper()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.longshot)
