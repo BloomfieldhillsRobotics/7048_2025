@@ -1,6 +1,8 @@
 
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
+import static java.lang.Boolean.TRUE;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
@@ -20,6 +22,7 @@ public class Constants {
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
+            .useBrakeModeInTeleOp(TRUE)
             .rightFrontMotorName("front right")
             .rightRearMotorName("back right")
             .leftRearMotorName("back left")

@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode;
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -10,6 +11,7 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -28,7 +30,7 @@ import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
 @TeleOp(name = "Los Protos")
 @Configurable //Panels
 public class TeleOpProgram extends NextFTCOpMode {
-
+    private TelemetryManager telemetryM;
     public TeleOpProgram() {
         addComponents(
                 new SubsystemComponent(PurpleProtonRobot.INSTANCE),
@@ -43,51 +45,100 @@ public class TeleOpProgram extends NextFTCOpMode {
             () -> -Gamepads.gamepad1().rightStickX().get()
     );
 
-    private TelemetryManager telemetryM;
 //    private HuskyLensTagDetector tagDetector;
-    private final Pose startPose = new Pose(56,8, Math.toRadians(0));
-    private final Pose shootPose = new Pose(48, 95, Math.toRadians(180));
-    //path to pick up PPG motif
-    private final Pose pickUpPPG = new Pose(42, 35, Math.toRadians(180));
-    private final Pose pickUpPPGcontrol = new Pose(14.5, 35, Math.toRadians(180));
-    //path to pick up PGP motif
+    private final Pose startPose = new Pose(56,8, Math.toRadians(90));
+    private final Pose shootPose = new Pose(48, 95, Math.toRadians(135));
+    //path to setup GPP pickup
+    private final Pose PickupGPPFirst = new Pose(48,35, Math.toRadians(180));
+    //Pickup GPP
+    private final Pose PickupGPPSecond = new Pose(9,36, Math.toRadians(180));
+    //Avoid Obstacles
+    private final Pose PickupGppAvoidObstacles = new Pose(69,47,Math.toRadians(180));
+    //Return to Base
+    private final Pose ReturntoBase = new Pose(39,34, Math.toRadians(180));
 
     //PPG path chains
-    private PathChain PPGfirst;
-    private PathChain PPGsecond;
+    private PathChain PickupGPPFirstPath;
+    private PathChain PickupGPPSecondPath;
+    private PathChain PickupGPPShoot;
+    private PathChain GPPReturnToBase;
+    private PathChain PathPickupGppAvoidObstacles;
+
     private void buildPaths() {
         //PGP paths
-        PPGfirst = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierCurve(startPose, pickUpPPGcontrol, pickUpPPG))
-                .setConstantHeadingInterpolation(0.0)
+        PickupGPPFirstPath = PedroComponent.follower().pathBuilder()
+                .addPath(new BezierCurve(PedroComponent.follower().getPose(), PickupGPPFirst))
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), PickupGPPFirst.getHeading())
+                .setGlobalDeceleration(.5)
                 .build();
-        PPGsecond = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickUpPPG, shootPose))
-                .setConstantHeadingInterpolation(0.0)
-                .build();}
-    public Command getPPG() {
+        PickupGPPSecondPath = PedroComponent.follower().pathBuilder()
+                .addPath(new BezierCurve(PedroComponent.follower().getPose(), PickupGPPSecond))
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), PickupGPPSecond.getHeading())
+                .setGlobalDeceleration(.5)
+                .build();
+        PathPickupGppAvoidObstacles = PedroComponent.follower().pathBuilder()
+                .addPath(new BezierCurve(PedroComponent.follower().getPose(), PickupGppAvoidObstacles))
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), PickupGppAvoidObstacles.getHeading())
+                .setGlobalDeceleration(.5)
+                .build();
+        PickupGPPShoot = PedroComponent.follower().pathBuilder()
+                .addPath(new BezierCurve(PedroComponent.follower().getPose(), shootPose))
+                .setGlobalDeceleration(.5)
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), shootPose.getHeading())
+                .build();
+        GPPReturnToBase = PedroComponent.follower().pathBuilder()
+                .addPath(new BezierCurve(PedroComponent.follower().getPose(), ReturntoBase))
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), ReturntoBase.getHeading())
+                .setGlobalDeceleration(.5)
+                .build();
+    }
+
+    public Command getGPP() {
         return new SequentialGroup(
-                new FollowPath(PPGfirst)
-//                , //go to front of artifacts
-//                PurpleProtonRobot.INSTANCE.intakeRun, //intake on
-//                new FollowPath(PPGsecond), //
-//                PurpleProtonRobot.INSTANCE.intakeStop, //intake off
-//                PurpleProtonRobot.INSTANCE.shoot
+                new FollowPath(PickupGPPFirstPath),
+                new Delay(5),
+                PurpleProtonRobot.INSTANCE.intakeRun,
+                new Delay(5),
+                new FollowPath(PickupGPPSecondPath),
+                new Delay(5),
+                PurpleProtonRobot.INSTANCE.intakeStop,
+                new Delay(5),
+                new FollowPath(PathPickupGppAvoidObstacles),
+                new Delay(5),
+                new FollowPath(PickupGPPShoot),
+                new Delay(5),
+                PurpleProtonRobot.INSTANCE.elevatorUp,
+                new Delay(5),
+
+                PurpleProtonRobot.INSTANCE.shoot,
+                new Delay(5),
+                new FollowPath(GPPReturnToBase)
         );
     }
     @Override public void onInit() {
+        driverControlled.schedule();
+        PedroComponent.follower().setStartingPose(startPose);
+        PedroComponent.follower().update();
         buildPaths();
-//        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+        telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
     }
     @Override public void onUpdate() {
         // Update Pedro Pathing and Panels every iteration
-//        PedroComponent.follower().update();
+        PedroComponent.follower().update();
+        // These loop the movements of the robot, these must be called continuously in order to work
+        // Feedback to Driver Hub for debugging
+        telemetry.addData("x", PedroComponent.follower().getPose().getX());
+        telemetry.addData("y", PedroComponent.follower().getPose().getY());
+        telemetry.addData("heading", PedroComponent.follower().getPose().getHeading());
+        telemetryM.debug("position", PedroComponent.follower().getPose());
+        telemetryM.debug("velocity", PedroComponent.follower().getVelocity());
+        telemetryM.update();
+        telemetry.update();
     }
     public void onStartButtonPressed() {
-        driverControlled.schedule();
-        PedroComponent.follower().setStartingPose(startPose);
+        PedroComponent.follower().startTeleopDrive();
         Gamepads.gamepad1().a()
-                .whenBecomesTrue(getPPG());
+                .whenBecomesTrue(getGPP());
         Gamepads.gamepad2().b()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.intakeRun)
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.intakeStop);
@@ -101,7 +152,6 @@ public class TeleOpProgram extends NextFTCOpMode {
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.elevatorDown);
         Gamepads.gamepad2().rightBumper()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.ShortShot)
-
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
         Gamepads.gamepad2().leftBumper()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.longshot)
