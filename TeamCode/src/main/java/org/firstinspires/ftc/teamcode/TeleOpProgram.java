@@ -10,6 +10,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import dev.nextftc.bindings.BindingManager;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
@@ -40,9 +41,12 @@ public class TeleOpProgram extends NextFTCOpMode {
         );
     }
     DriverControlledCommand driverControlled = new PedroDriverControlled(
-            () -> -Gamepads.gamepad1().leftStickY().get(),
-            () -> -Gamepads.gamepad1().leftStickX().get(),
-            () -> -Gamepads.gamepad1().rightStickX().get()
+           // () -> -Gamepads.gamepad1().leftStickY().get(),
+          //  () -> -Gamepads.gamepad1().leftStickX().get(),
+          //  () -> -Gamepads.gamepad1().rightStickX().get()
+             Gamepads.gamepad1().leftStickY().negate(), // changed to this as above was giving runtime exceptions
+            Gamepads.gamepad1().leftStickX().negate(),
+            Gamepads.gamepad1().rightStickX().negate()
     );
 
 //    private HuskyLensTagDetector tagDetector;
@@ -120,10 +124,13 @@ public class TeleOpProgram extends NextFTCOpMode {
         PedroComponent.follower().update();
         buildPaths();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+
     }
+
     @Override public void onUpdate() {
         // Update Pedro Pathing and Panels every iteration
         PedroComponent.follower().update();
+        BindingManager.update();
         // These loop the movements of the robot, these must be called continuously in order to work
         // Feedback to Driver Hub for debugging
         telemetry.addData("x", PedroComponent.follower().getPose().getX());
@@ -133,6 +140,7 @@ public class TeleOpProgram extends NextFTCOpMode {
         telemetryM.debug("velocity", PedroComponent.follower().getVelocity());
         telemetryM.update();
         telemetry.update();
+
     }
     public void onStartButtonPressed() {
         PedroComponent.follower().startTeleopDrive();
