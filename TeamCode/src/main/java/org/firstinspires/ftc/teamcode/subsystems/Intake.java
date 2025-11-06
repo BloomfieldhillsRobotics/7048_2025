@@ -12,7 +12,7 @@ public class Intake implements Subsystem {
     private MotorEx Intake = new MotorEx("Intake");
 
 
-    public Command run = new SetPower(Intake,.7).requires(this);
+    public Command run = new SetPower(Intake,.8).requires(this);
     public Command stop = new SetPower(Intake,0).requires(this);
 
     public Command runBackwards = new SetPower(Intake,-0.7).requires(this);

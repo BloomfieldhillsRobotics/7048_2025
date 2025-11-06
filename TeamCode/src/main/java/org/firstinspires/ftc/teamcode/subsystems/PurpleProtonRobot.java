@@ -14,7 +14,8 @@ public class PurpleProtonRobot extends SubsystemGroup {
         super(
                 Intake.INSTANCE,
                 FlyWheel.INSTANCE,
-                Elevator.INSTANCE
+                Elevator.INSTANCE,
+                Basket.INSTANCE
         );
     }
     public final Command intakeStop =
@@ -50,7 +51,16 @@ public class PurpleProtonRobot extends SubsystemGroup {
     public final Command ShortShot =
             new SequentialGroup(
                     FlyWheel.INSTANCE.shortshot
-            ).named("FlyWheelRun");
+            ).named("ShortShot");
+
+    public final Command LongShot =
+            new SequentialGroup(
+                    FlyWheel.INSTANCE.longshot,
+                    Elevator.INSTANCE.up,
+                    new Delay(.5),
+                    Elevator.INSTANCE.down,
+                    FlyWheel.INSTANCE.stop
+            ).named("LongShot");
 
     public final Command FlyWheelStop =
             new SequentialGroup(
@@ -84,5 +94,14 @@ public class PurpleProtonRobot extends SubsystemGroup {
             new SequentialGroup(
                     Intake.INSTANCE.runBackwards
             ).named("runIntakeBackwards");
+    public final Command basketdrop =
+            new SequentialGroup(
+                    Elevator.INSTANCE.down,
+                    Basket.INSTANCE.down
+            ).named("BasketDrop");
+    public final Command basketup =
+            new SequentialGroup(
+                    Basket.INSTANCE.up
+            ).named("BasketUp");
 
 }

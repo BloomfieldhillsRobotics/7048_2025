@@ -5,14 +5,21 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.geometry.BezierCurve;
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.internal.camera.delegating.DelegatingCaptureSequence;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
+
+import java.util.List;
 
 import dev.nextftc.bindings.BindingManager;
 import dev.nextftc.core.commands.Command;
@@ -28,20 +35,14 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.DriverControlledCommand;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
-
-import java.util.List;
-
-
-@TeleOp(name = "Los Protos")
+@Autonomous(name = "Autonomous 1", preselectTeleOp = "Los Protos")
 @Configurable //Panels
-public class TeleOpProgram extends NextFTCOpMode {
+public class AutoProgram extends NextFTCOpMode {
     private TelemetryManager telemetryM;
     private Limelight3A limelight;
-
-    public TeleOpProgram() {
+    public int at; // April tag code 21, 22 or 23
+    
+    public AutoProgram() {
         addComponents(
                 new SubsystemComponent(PurpleProtonRobot.INSTANCE),
                 BulkReadComponent.INSTANCE,
@@ -49,14 +50,6 @@ public class TeleOpProgram extends NextFTCOpMode {
                 new PedroComponent(Constants::createFollower)
         );
     }
-    DriverControlledCommand driverControlled = new PedroDriverControlled(
-           // () -> -Gamepads.gamepad1().leftStickY().get(),
-          //  () -> -Gamepads.gamepad1().leftStickX().get(),
-          //  () -> -Gamepads.gamepad1().rightStickX().get()
-            Gamepads.gamepad1().leftStickY().negate(), // changed to this as above was giving runtime exceptions
-            Gamepads.gamepad1().leftStickX().negate(),
-            Gamepads.gamepad1().rightStickX().negate()
-    );
 
 //    private HuskyLensTagDetector tagDetector;
     private final Pose startPose = new Pose(88,7, Math.toRadians(90));
@@ -87,19 +80,16 @@ public class TeleOpProgram extends NextFTCOpMode {
                 .addPath(new BezierCurve(PedroComponent.follower().getPose(), startPose))
                 .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), startPose.getHeading())
                 .setGlobalDeceleration(.1)
-                .setBrakingStrength(.5)
                 .build();
         shootPosePath = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierCurve(PedroComponent.follower().getPose(), shootPose))
                 .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), shootPose.getHeading())
                 .setGlobalDeceleration(.1)
-                .setBrakingStrength(.5)
                 .build();
         aprilReadPath = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierCurve(PedroComponent.follower().getPose(), aprilRead))
                 .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), aprilRead.getHeading())
                 .setGlobalDeceleration(.1)
-                .setBrakingStrength(.5)
                 .build();
         PickupGPPFirstPath = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierCurve(PedroComponent.follower().getPose(), PickupGPPFirst))
@@ -126,18 +116,14 @@ public class TeleOpProgram extends NextFTCOpMode {
                 .setGlobalDeceleration(.5)
                 .build();
     }
-
-    public Command getGPP() {
-
-        return new SequentialGroup(
+    public void getGPP() {
+        new SequentialGroup(
                 PurpleProtonRobot.INSTANCE.elevatorDown,
                 new FollowPath(aprilReadPath),
                 new FollowPath(shootPosePath),
-                PurpleProtonRobot.INSTANCE.LongShot,
+                PurpleProtonRobot.INSTANCE.shoot,
                 PurpleProtonRobot.INSTANCE.intakeRun,
                 new Delay(1),
-                PurpleProtonRobot.INSTANCE.LongShot,
-                new Delay(3),
                 new FollowPath(PickupGPPSecondPath),
                 new Delay(1),
                 PurpleProtonRobot.INSTANCE.intakeStop,
@@ -153,8 +139,8 @@ public class TeleOpProgram extends NextFTCOpMode {
                 new FollowPath(GPPReturnToBase)
         );
     }
+
     @Override public void onInit() {
-        driverControlled.schedule();
         PedroComponent.follower().setStartingPose(startPose);
         PedroComponent.follower().update();
         buildPaths();
@@ -163,27 +149,17 @@ public class TeleOpProgram extends NextFTCOpMode {
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         telemetry.setMsTransmissionInterval(11);
         limelight.pipelineSwitch(0);
+
         /*
          * Starts polling for data.
          */
         limelight.start();
-
-
     }
 
     @Override public void onUpdate() {
         // Update Pedro Pathing and Panels every iteration
         PedroComponent.follower().update();
         BindingManager.update();
-        // These loop the movements of the robot, these must be called continuously in order to work
-        // Feedback to Driver Hub for debugging
-        LLStatus status = limelight.getStatus();
-        telemetry.addData("Name", "%s",
-                status.getName());
-        telemetry.addData("LL", "Temp: %.1fC, CPU: %.1f%%, FPS: %d",
-                status.getTemp(), status.getCpu(),(int)status.getFps());
-        telemetry.addData("Pipeline", "Index: %d, Type: %s",
-                status.getPipelineIndex(), status.getPipelineType());
 
         LLResult result = limelight.getLatestResult();
         if (result.isValid()) {
@@ -193,7 +169,7 @@ public class TeleOpProgram extends NextFTCOpMode {
             double targetingLatency = result.getTargetingLatency();
             double parseLatency = result.getParseLatency();
             //telemetry.addData("LL Latency", captureLatency + targetingLatency);
-           // telemetry.addData("Parse Latency", parseLatency);
+            // telemetry.addData("Parse Latency", parseLatency);
             //telemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
 
             telemetry.addData("tx", result.getTx());
@@ -202,42 +178,24 @@ public class TeleOpProgram extends NextFTCOpMode {
             telemetry.addData("tync", result.getTyNC());
 
             telemetry.addData("Botpose", botpose.toString());
-/*
-            // Access barcode results
-            List<LLResultTypes.BarcodeResult> barcodeResults = result.getBarcodeResults();
-            for (LLResultTypes.BarcodeResult br : barcodeResults) {
-                telemetry.addData("Barcode", "Data: %s", br.getData());
-            }
 
-            // Access classifier results
-            List<LLResultTypes.ClassifierResult> classifierResults = result.getClassifierResults();
-            for (LLResultTypes.ClassifierResult cr : classifierResults) {
-                telemetry.addData("Classifier", "Class: %s, Confidence: %.2f", cr.getClassName(), cr.getConfidence());
-            }
-
-            // Access detector results
-            List<LLResultTypes.DetectorResult> detectorResults = result.getDetectorResults();
-            for (LLResultTypes.DetectorResult dr : detectorResults) {
-                telemetry.addData("Detector", "Class: %s, Area: %.2f", dr.getClassName(), dr.getTargetArea());
-            }
-
-             // Access color results
-            List<LLResultTypes.ColorResult> colorResults = result.getColorResults();
-            for (LLResultTypes.ColorResult cr : colorResults) {
-                telemetry.addData("Color", "X: %.2f, Y: %.2f", cr.getTargetXDegrees(), cr.getTargetYDegrees());
-            }
-*/
             // Access fiducial results
             List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
             for (LLResultTypes.FiducialResult fr : fiducialResults) {
                 telemetry.addData("Fiducial", "ID: %d, Family: %s, X: %.2f, Y: %.2f", fr.getFiducialId(), fr.getFamily(), fr.getTargetXDegrees(), fr.getTargetYDegrees());
+                if ((fr.getFiducialId() > 20) && (fr.getFiducialId() < 24)) {
+                    at = fr.getFiducialId();
+                }
+                else { at = 21; }
             }
-
-
         } else {
             telemetry.addData("Limelight", "No data available");
         }
 
+        getGPP();
+
+        // These loop the movements of the robot, these must be called continuously in order to work
+        // Feedback to Driver Hub for debugging
         telemetry.addData("x", PedroComponent.follower().getPose().getX());
         telemetry.addData("y", PedroComponent.follower().getPose().getY());
         telemetry.addData("heading", PedroComponent.follower().getPose().getHeading());
@@ -247,32 +205,7 @@ public class TeleOpProgram extends NextFTCOpMode {
         telemetry.update();
 
     }
-    public void onStartButtonPressed() {
-        PedroComponent.follower().startTeleopDrive();
-        Gamepads.gamepad1().a()
-                .whenBecomesTrue(getGPP());
-        Gamepads.gamepad2().b()
-                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.intakeRun)
-                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.intakeStop);
-        //Gamepads.gamepad2().a()
-        //        .whenBecomesTrue(PurpleProtonRobot.INSTANCE.runIntakeBackwards)
-         //       .whenBecomesFalse(PurpleProtonRobot.INSTANCE.intakeStop);
-        Gamepads.gamepad2().dpadUp()
-                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.elevatorUp)
-                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.elevatorDown);
-        Gamepads.gamepad2().dpadDown()
-                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.elevatorDown);
-        Gamepads.gamepad2().rightBumper()
-                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.ShortShot)
-                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
-        Gamepads.gamepad2().leftBumper()
-                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.longshot)
-                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
-        //Gamepads.gamepad2().x()
-         //       .whenBecomesTrue(PurpleProtonRobot.INSTANCE.superlongshot)
-         //       .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
-        Gamepads.gamepad2().y()
-                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.basketdrop)
-                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.basketup);
+    @Override public void onStartButtonPressed() {
+
     }
 }
