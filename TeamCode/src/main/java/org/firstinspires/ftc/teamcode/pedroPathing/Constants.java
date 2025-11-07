@@ -8,7 +8,6 @@ import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.localization.Encoder;
-import com.pedropathing.ftc.localization.constants.DriveEncoderConstants;
 import com.pedropathing.ftc.localization.constants.TwoWheelConstants;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -17,8 +16,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(5);
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+            .mass(9.2)
+            .forwardZeroPowerAcceleration(-27.4)
+            .lateralZeroPowerAcceleration(-52.9);
+
+    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 0.5, 1);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
@@ -30,10 +32,15 @@ public class Constants {
             .leftFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
+            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .xVelocity(68.755)
+            //.xVelocity(30)
+            .yVelocity(56.54);
+            //.yVelocity(28);
+
     public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
-            .forwardPodY(2)
-            .strafePodX(0)
+            .forwardPodY(2.5)
+            .strafePodX(0.5)
             .forwardEncoder_HardwareMapName("odometer2")
             .strafeEncoder_HardwareMapName("Intake")
             .strafeEncoderDirection(Encoder.REVERSE)

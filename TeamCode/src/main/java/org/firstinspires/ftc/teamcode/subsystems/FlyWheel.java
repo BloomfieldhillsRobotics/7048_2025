@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import java.util.Set;
 
+import dev.nextftc.control.ControlSystem;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.controllable.MotorGroup;
@@ -15,6 +16,7 @@ public class FlyWheel implements Subsystem {
             new MotorEx("FlywheelRight"),
             new MotorEx("FlywheelLeft").reversed()
     );
+
     public Command superlongshot = new SetPower(FlyWheelGroup,1).requires(this);
     //public Command superlongshot = new Set
     public Command longshot = new SetPower(FlyWheelGroup,.75).requires(this);
