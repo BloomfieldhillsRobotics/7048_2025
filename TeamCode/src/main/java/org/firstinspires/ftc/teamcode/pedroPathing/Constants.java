@@ -34,9 +34,7 @@ public class Constants {
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             .xVelocity(68.755)
-            //.xVelocity(30)
             .yVelocity(56.54);
-            //.yVelocity(28);
 
     public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
             .forwardPodY(2.5)
@@ -44,7 +42,7 @@ public class Constants {
             .forwardEncoder_HardwareMapName("odometer2")
             .strafeEncoder_HardwareMapName("Intake")
             .strafeEncoderDirection(Encoder.REVERSE)
-            .forwardEncoderDirection(Encoder.FORWARD)
+            .forwardEncoderDirection(Encoder.REVERSE)
             .forwardTicksToInches(0.002038338057)
             .strafeTicksToInches(0.0019700338663306)
             .IMU_HardwareMapName("imu")

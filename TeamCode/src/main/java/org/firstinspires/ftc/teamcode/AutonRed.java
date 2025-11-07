@@ -38,7 +38,7 @@ public class AutonRed extends NextFTCOpMode {
     private final Timer pathTimer = new Timer();
     private final Timer opmodeTimer = new Timer();
     // === Poses ===
-    private final Pose startPose = new Pose(85, 9, Math.toRadians(270));
+    private final Pose startPose = new Pose(88, 7, Math.toRadians(90));
 
     // === AprilTag IDs ===
     private static final int PPG_TAG_ID = 23;
@@ -46,7 +46,6 @@ public class AutonRed extends NextFTCOpMode {
     private static final int GPP_TAG_ID = 21;
     private static final int APRILTAG_PIPELINE = 5;
     private static final int DETECTION_TIMEOUT = 100;
-
 
     // === Pathing ===
 
@@ -115,7 +114,7 @@ public class AutonRed extends NextFTCOpMode {
             case 3: /* This case waits for robot to reach pickup 1 and scoops the sample */
                 if (!PedroComponent.follower().isBusy()) {
                     switch (foundID) {
-                        case PPG_TAG_ID: PedroComponent.follower().followPath(scoopPPG, true); break;
+                        case PPG_TAG_ID: PedroComponent.follower().followPath(scoopPPG, 0.5, true); break;
                         case PGP_TAG_ID: PedroComponent.follower().followPath(scoopPGP, true); break;
                         case GPP_TAG_ID: PedroComponent.follower().followPath(scoopGPP, true); break;
                     }
@@ -128,7 +127,8 @@ public class AutonRed extends NextFTCOpMode {
                 if (!PedroComponent.follower().isBusy()) {
                     PedroComponent.follower().setMaxPower(0.75);
                     switch (foundID) {
-                        case PPG_TAG_ID: PedroComponent.follower().followPath(backToScorePPG, true); break;
+                        case PPG_TAG_ID: PedroComponent.follower().followPath(backToScorePPG, true);
+                        break;
                         case PGP_TAG_ID: PedroComponent.follower().followPath(backToScorePGP, true); break;
                         case GPP_TAG_ID: PedroComponent.follower().followPath(backToScoreGPP, true); break;
                     }
@@ -170,8 +170,8 @@ public class AutonRed extends NextFTCOpMode {
 
     // === Path Building ===
     private void buildPaths() {
-        Pose scoring1 = new Pose(90, 90, Math.toRadians(220));
-        Pose scoring2 = new Pose(96, 49, Math.toRadians(220));
+        Pose scoring1 = new Pose(90, 90, Math.toRadians(45));
+        Pose scoring2 = new Pose(96, 49, Math.toRadians(45));
 
         // PPG
         Pose pickup1GPP = new Pose(100, 39, Math.toRadians(0));
