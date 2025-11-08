@@ -22,6 +22,7 @@ import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
+import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
@@ -47,7 +48,7 @@ public class AutonRed extends NextFTCOpMode {
     private static final int PPG_TAG_ID = 23;
     private static final int PGP_TAG_ID = 22;
     private static final int GPP_TAG_ID = 21;
-    private static final int APRILTAG_PIPELINE = 5;
+    private static final int APRILTAG_PIPELINE = 0;
     private static final int DETECTION_TIMEOUT = 100;
 
     // === Pathing ===
@@ -80,96 +81,6 @@ public class AutonRed extends NextFTCOpMode {
         telemetry.addData(caption, value);
         if (panelsTelemetry != null) panelsTelemetry.debug(caption + ": " + value);
     }
-    public final Command PPGIntakeSequence =
-            new SequentialGroup(
-                    PedroComponent.follower().followPath(alignPPG, true),
-                    PurpleProtonRobot.INSTANCE.IntakeRun
-            ).named("PPGIntakeSequence");
-    // === Path State Machine ===
-    private void autonomousPathUpdate() {
-        if (foundID == 0) return;
-
-        switch (pathState) {
-            case 0: /* This case starts the alignment to the scoring position */
-                if (true) {
-                    switch (foundID) {
-                        case PPG_TAG_ID:
-                            PPGIntakeSequence().schedule;
-                                     break;
-                        case PGP_TAG_ID: PedroComponent.follower().followPath(alignPGP, true); break;
-                        case GPP_TAG_ID: PedroComponent.follower().followPath(alignGPP, true); break;
-                    }
-                    setPathState(1);
-                }
-                break;
-
-            case 1: /* This case waits for return to scoring and starts shooting */
-                if (!PedroComponent.follower().isBusy()) {
-                    setPathState(2);
-                }
-                break;
-
-            case 2: /* This case waits for alignment to finish and moves to pickup 1 */
-                if (!isShooting) {
-                    switch (foundID) {
-                        case PPG_TAG_ID: PedroComponent.follower().followPath(toPickup1PPG, true); break;
-                        case PGP_TAG_ID: PedroComponent.follower().followPath(toPickup1PGP, true); break;
-                        case GPP_TAG_ID: PedroComponent.follower().followPath(toPickup1GPP, true); break;
-                    }
-                    setPathState(3);
-                }
-                break;
-
-            case 3: /* This case waits for robot to reach pickup 1 and scoops the sample */
-                if (!PedroComponent.follower().isBusy()) {
-                    switch (foundID) {
-                        case PPG_TAG_ID: PedroComponent.follower().followPath(scoopPPG, 0.5, true); break;
-                        case PGP_TAG_ID: PedroComponent.follower().followPath(scoopPGP, true); break;
-                        case GPP_TAG_ID: PedroComponent.follower().followPath(scoopGPP, true); break;
-                    }
-                    setPathState(4);
-                }
-                break;
-
-            case 4: /* This case waits for scoop to finish and returns to scoring position */
-
-                if (!PedroComponent.follower().isBusy()) {
-                    PedroComponent.follower().setMaxPower(0.75);
-                    switch (foundID) {
-                        case PPG_TAG_ID: PedroComponent.follower().followPath(backToScorePPG, true);
-                        break;
-                        case PGP_TAG_ID: PedroComponent.follower().followPath(backToScorePGP, true); break;
-                        case GPP_TAG_ID: PedroComponent.follower().followPath(backToScoreGPP, true); break;
-                    }
-                    setPathState(5);
-                }
-                break;
-
-            case 5: /* This case waits for return to scoring and starts shooting */
-                if (!PedroComponent.follower().isBusy()) {
-                    setPathState(6);
-                }
-                break;
-
-            case 6: /* This case waits for shooting to complete */
-                if (!isShooting) {
-                    PedroComponent.follower().setMaxPower(1);
-                    switch (foundID) {
-                        case PPG_TAG_ID: PedroComponent.follower().followPath(leavePPG, true); break;
-                        case PGP_TAG_ID: PedroComponent.follower().followPath(leavePGP, true); break;
-                        case GPP_TAG_ID: PedroComponent.follower().followPath(leaveGPP, true); break;
-                    }
-                    setPathState(7);
-                }
-                break;
-
-            case 7: /* This case waits for leave path to finish */
-                if (!PedroComponent.follower().isBusy()) {
-                    setPathState(-1);
-                }
-                break;
-        }
-    }
 
     private void setPathState(int pState) {
         pathState = pState;
@@ -197,7 +108,7 @@ public class AutonRed extends NextFTCOpMode {
                 .build();
 
         scoopPPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup1GPP, pickup2GPP))
+                .addPath(new BezierLine(pickup1PPG, pickup2GPP))
                 .setConstantHeadingInterpolation(pickup1GPP.getHeading())
                 .build();
 
@@ -289,7 +200,8 @@ public class AutonRed extends NextFTCOpMode {
             new Delay(5);
             timeout++;
         }
-        foundID = PPG_TAG_ID;
+        if(foundID == 0 && timeout > DETECTION_TIMEOUT)
+            foundID = PGP_TAG_ID;
         log("Warning", "No tag detected – using PPG");
     }
 
@@ -312,7 +224,6 @@ public class AutonRed extends NextFTCOpMode {
         buildPaths();
 
         log("Status", "INIT: Ready");
-        telemetry.update();
     }
 
     @Override
@@ -323,31 +234,88 @@ public class AutonRed extends NextFTCOpMode {
 
     @Override
     public void onStartButtonPressed() {
-        opmodeTimer.resetTimer();
-        new Delay(5);
-        detectAprilTag();
-        setPathState(0);
-        log("Status", "START: Running");
-    }
+            opmodeTimer.resetTimer();
+            detectAprilTag(); // This should run before building the command
+            log("Status", "START: Running");
+
+            // 1. Create a placeholder for the command we are about to build
+            Command autonomousCommand;
+
+            // 2. Build the correct sequence of commands based on the detected tag
+            switch (foundID) {
+                case PPG_TAG_ID:
+                    autonomousCommand = new SequentialGroup(
+                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            PurpleProtonRobot.INSTANCE.BasketDrop,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            PurpleProtonRobot.INSTANCE.BasketUp,
+                            new FollowPath(alignPPG, true),
+                            PurpleProtonRobot.INSTANCE.IntakeRun,
+                            new FollowPath(toPickup1PPG, true),
+                            new FollowPath(scoopPPG, true, 0.5),
+                            PurpleProtonRobot.INSTANCE.IntakeStop,
+                            new FollowPath(backToScorePPG, true),
+                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            new FollowPath(leavePPG, true)
+                    );
+                    break;
+                case PGP_TAG_ID:
+                    autonomousCommand = new SequentialGroup(
+
+
+                            new FollowPath(alignPGP, true),
+                            PurpleProtonRobot.INSTANCE.IntakeRun,
+                            new FollowPath(toPickup1PGP, true),
+                            new FollowPath(scoopPGP, true, 0.5),
+                            PurpleProtonRobot.INSTANCE.IntakeStop,
+                            new FollowPath(backToScorePGP, true),
+                            new FollowPath(leavePGP, true)
+                    );
+                    break;
+                case GPP_TAG_ID:
+                default: // Default to GPP if something goes wrong
+                    autonomousCommand = new SequentialGroup(
+                            new FollowPath(alignGPP, true),
+                            PurpleProtonRobot.INSTANCE.IntakeRun,
+                            new FollowPath(toPickup1GPP, true),
+                            new FollowPath(scoopGPP, true, 0.5),
+                            PurpleProtonRobot.INSTANCE.IntakeStop,
+                            new FollowPath(backToScoreGPP, true),
+                            new FollowPath(leaveGPP, true)
+                    );
+                    break;
+            }
+
+            // 3. Schedule the one, big command to run. The scheduler handles the rest.
+            autonomousCommand.schedule();
+    };
 
     @Override
     public void onUpdate() {
-        PedroComponent.follower().update();
-        autonomousPathUpdate();
+            // onUpdate can be simplified. The command scheduler runs automatically.
+            // You only need Pedro's update and your telemetry.
+            PedroComponent.follower().update();
 
-        if (panelsTelemetry != null) panelsTelemetry.update();
+            if (panelsTelemetry != null) panelsTelemetry.update();
 
-        Pose pose = PedroComponent.follower().getPose();
-        double normH = Math.toDegrees((pose.getHeading() + 2 * Math.PI) % (2 * Math.PI));
+            Pose pose = PedroComponent.follower().getPose();
+            double normH = Math.toDegrees((pose.getHeading() + 2 * Math.PI) % (2 * Math.PI));
 
-        log("X",            String.format("%.2f", pose.getX()));
-        log("Y",            String.format("%.2f", pose.getY()));
-        log("Heading",      String.format("%.2f°", normH));
-        log("Path State",   pathState);
-        log("Found ID",     foundID);
-        log("Time (s)",     String.format("%.2f", opmodeTimer.getElapsedTimeSeconds()));
+            log("X",            String.format("%.2f", pose.getX()));
+            log("Y",            String.format("%.2f", pose.getY()));
+            log("Heading",      String.format("%.2f°", normH));
+            log("Found ID",     foundID);
+            log("Time (s)",     String.format("%.2f", opmodeTimer.getElapsedTimeSeconds()));
 
-        telemetry.update();
+            telemetry.update();
     }
 
     @Override
@@ -355,4 +323,4 @@ public class AutonRed extends NextFTCOpMode {
         if (limelight != null) limelight.stop();
         log("Status", "STOP: Done");
     }
-}
+};

@@ -42,7 +42,7 @@ public class Constants {
             .forwardEncoder_HardwareMapName("odometer2")
             .strafeEncoder_HardwareMapName("Intake")
             .strafeEncoderDirection(Encoder.REVERSE)
-            .forwardEncoderDirection(Encoder.REVERSE)
+            .forwardEncoderDirection(Encoder.FORWARD)
             .forwardTicksToInches(0.002038338057)
             .strafeTicksToInches(0.0019700338663306)
             .IMU_HardwareMapName("imu")
