@@ -26,7 +26,7 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name = "RedAutonLong")
+@Autonomous(name = "AutoBlueLong", preselectTeleOp = "Los Protos")
 public class AutoBlueLong extends NextFTCOpMode {
     public AutoBlueLong() {
         addComponents(
