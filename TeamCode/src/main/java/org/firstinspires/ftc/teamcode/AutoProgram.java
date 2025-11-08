@@ -294,8 +294,10 @@ public class AutoProgram extends NextFTCOpMode {
     @Override
     public void onStartButtonPressed() {
         //red1().schedule();
-        testauto().schedule();
-        testauto2().schedule();
+        new SequentialGroup(
+            testauto(),
+            testauto2()
+        ).schedule();
         /*
         switch (readAT()) {
             case 21:
