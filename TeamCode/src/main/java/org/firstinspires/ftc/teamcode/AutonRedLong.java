@@ -18,7 +18,6 @@ import java.util.List;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
-import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -27,9 +26,9 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name = "RedAutonWPedro")
-public class AutonRed extends NextFTCOpMode {
-    public AutonRed() {
+@Autonomous(name = "RedAutonLong")
+public class AutonRedLong extends NextFTCOpMode {
+    public AutonRedLong() {
         addComponents(
                 new SubsystemComponent(PurpleProtonRobot.INSTANCE),
                 BulkReadComponent.INSTANCE,
@@ -253,7 +252,6 @@ public class AutonRed extends NextFTCOpMode {
                             PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.BasketDrop,
                             PurpleProtonRobot.INSTANCE.LongShot,
-                            PurpleProtonRobot.INSTANCE.BasketUp,
                             new FollowPath(alignPPG, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeRun,
                             new FollowPath(toPickup1PPG, true, .8),
@@ -275,7 +273,6 @@ public class AutonRed extends NextFTCOpMode {
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
                             PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.BasketDrop,
-                            PurpleProtonRobot.INSTANCE.BasketUp,
                             PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
                             PurpleProtonRobot.INSTANCE.LongShot,
@@ -296,20 +293,25 @@ public class AutonRed extends NextFTCOpMode {
                 case GPP_TAG_ID:
                 default: // Default to GPP if something goes wrong
                     autonomousCommand = new SequentialGroup(
-                            new FollowPath(alignGPP, true),
+                            new FollowPath(alignGPP, true, .8),
+                            PurpleProtonRobot.INSTANCE.BasketDrop,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeRun,
-                            new FollowPath(toPickup1GPP, true),
-                            new FollowPath(scoopGPP, true, 0.5),
+                            new FollowPath(toPickup1GPP, true, .8),
+                            new FollowPath(scoopGPP, true, 0.3),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
-                            new FollowPath(backToScoreGPP, true),
-                            new FollowPath(leaveGPP, true),
+                            new FollowPath(backToScoreGPP, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
                             PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
                             PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
                             PurpleProtonRobot.INSTANCE.LongShot,
-                            new FollowPath(leaveGPP, true)
+                            new FollowPath(leaveGPP, true, .8)
                     );
                     break;
             }
