@@ -56,7 +56,7 @@ public class AutoBlueShort extends NextFTCOpMode {
     private static final int PGP_TAG_ID = 22;
     private static final int GPP_TAG_ID = 21;
     private static final int APRILTAG_PIPELINE = 0;
-    private static final int DETECTION_TIMEOUT = 100;
+    private static final int DETECTION_TIMEOUT = 1000;
 
     // === Pathing ===
 
@@ -98,30 +98,33 @@ public class AutoBlueShort extends NextFTCOpMode {
     // === Path Building ===
     private void buildPaths() {
 
+
         alignPPG = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(startPose, scoring1))
                 .setLinearHeadingInterpolation(startPose.getHeading(), scoring1.getHeading())
                 .build();
 
         toPickup1PPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(scoring1, pickup1PPG))
-                .setLinearHeadingInterpolation(scoring1.getHeading(), pickup1PPG.getHeading())
+                .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup1PPG))
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup1PPG.getHeading())
                 .build();
 
         scoopPPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup1PPG, pickup2PPG))
-                .setConstantHeadingInterpolation(pickup1PPG.getHeading())
+                .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup2PPG))
+                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
                 .build();
 
         backToScorePPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup2PPG, scoring1))
-                .setLinearHeadingInterpolation(pickup2PPG.getHeading(), scoring1.getHeading())
+                .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring1))
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring1.getHeading())
                 .build();
 
         leavePPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(scoring1, scoring2))
-                .setConstantHeadingInterpolation(scoring1.getHeading())
+                .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring2))
+                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
                 .build();
+
+
 
         alignPGP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(startPose, scoring1))
@@ -129,23 +132,23 @@ public class AutoBlueShort extends NextFTCOpMode {
                 .build();
 
         toPickup1PGP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(scoring1, pickup1PGP))
-                .setLinearHeadingInterpolation(scoring1.getHeading(), pickup1PGP.getHeading())
+                .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup1PGP))
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup1PGP.getHeading())
                 .build();
 
         scoopPGP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup1PGP, pickup2PGP))
-                .setConstantHeadingInterpolation(pickup1PGP.getHeading())
+                .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup2PGP))
+                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
                 .build();
 
         backToScorePGP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup2PGP, scoring1))
-                .setLinearHeadingInterpolation(pickup2PGP.getHeading(), scoring1.getHeading())
+                .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring1))
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring1.getHeading())
                 .build();
 
         leavePGP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(scoring1, scoring2))
-                .setConstantHeadingInterpolation(scoring1.getHeading())
+                .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring2))
+                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
                 .build();
 
 
@@ -155,24 +158,25 @@ public class AutoBlueShort extends NextFTCOpMode {
                 .setLinearHeadingInterpolation(startPose.getHeading(), scoring1.getHeading())
                 .build();
 
+
         toPickup1GPP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(scoring1, pickup1PGP))
-                .setLinearHeadingInterpolation(scoring1.getHeading(), pickup1GPP.getHeading())
+                .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup1PGP))
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup1GPP.getHeading())
                 .build();
 
         scoopGPP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup1GPP, pickup2GPP))
-                .setConstantHeadingInterpolation(pickup1GPP.getHeading())
+                .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup2GPP))
+                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
                 .build();
 
         backToScoreGPP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup2PGP, scoring1))
-                .setLinearHeadingInterpolation(pickup2GPP.getHeading(), scoring1.getHeading())
+                .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring1))
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring1.getHeading())
                 .build();
 
         leaveGPP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(scoring1, scoring2))
-                .setConstantHeadingInterpolation(scoring1.getHeading())
+                .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring2))
+                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
                 .build();
     }
 
@@ -251,6 +255,7 @@ public class AutoBlueShort extends NextFTCOpMode {
                             PurpleProtonRobot.INSTANCE.IntakeRun,
                             new FollowPath(toPickup1PPG, true, .8),
                             new FollowPath(scoopPPG, true, 0.3),
+                            new FollowPath(toPickup1PPG, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
                             new FollowPath(backToScorePPG, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
