@@ -27,8 +27,8 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
 @Autonomous(name = "RedAutonShort")
-public class AutonRedShort extends NextFTCOpMode {
-    public AutonRedShort() {
+public class AutoBlueShort extends NextFTCOpMode {
+    public AutoBlueShort() {
         addComponents(
                 new SubsystemComponent(PurpleProtonRobot.INSTANCE),
                 BulkReadComponent.INSTANCE,
@@ -41,15 +41,15 @@ public class AutonRedShort extends NextFTCOpMode {
     private final Timer pathTimer = new Timer();
     private final Timer opmodeTimer = new Timer();
     // === Poses ===
-    private final Pose startPose = new Pose(128, 116, Math.toRadians(135));
-    private final Pose scoring1 = new Pose(116, 115, Math.toRadians(45));
-    private final Pose scoring2 = new Pose(96, 49, Math.toRadians(45));
-    private final Pose pickup1PPG = new Pose(100, 83, Math.toRadians(0));
-    private final Pose pickup2PPG = new Pose(124, 83, Math.toRadians(0));
-    private final Pose pickup1PGP = new Pose(100, 59, Math.toRadians(0));
-    private final Pose pickup2PGP = new Pose(124, 59, Math.toRadians(0));
-    private final Pose pickup1GPP = new Pose(100, 36, Math.toRadians(0));
-    private final Pose pickup2GPP = new Pose(124, 36, Math.toRadians(0));
+    private final Pose startPose = new Pose(18, 116, Math.toRadians(45));
+    private final Pose scoring1 = new Pose(28, 115, Math.toRadians(135));
+    private final Pose scoring2 = new Pose(48, 49, Math.toRadians(135));
+    private final Pose pickup1PPG = new Pose(46, 83, Math.toRadians(180));
+    private final Pose pickup2PPG = new Pose(19, 83, Math.toRadians(180));
+    private final Pose pickup1PGP = new Pose(46, 59, Math.toRadians(180));
+    private final Pose pickup2PGP = new Pose(19, 59, Math.toRadians(180));
+    private final Pose pickup1GPP = new Pose(46, 36, Math.toRadians(180));
+    private final Pose pickup2GPP = new Pose(19, 36, Math.toRadians(180));
 
     // === AprilTag IDs ===
     private static final int PPG_TAG_ID = 23;

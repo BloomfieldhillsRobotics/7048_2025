@@ -42,6 +42,14 @@ public class AutonRedLong extends NextFTCOpMode {
     private final Timer opmodeTimer = new Timer();
     // === Poses ===
     private final Pose startPose = new Pose(88, 7, Math.toRadians(90));
+    private final Pose scoring1 = new Pose(90, 90, Math.toRadians(45));
+    private final Pose scoring2 = new Pose(96, 49, Math.toRadians(45));
+    private final Pose pickup1PPG = new Pose(100, 83, Math.toRadians(0));
+    private final Pose pickup2PPG = new Pose(124, 83, Math.toRadians(0));
+    private final Pose pickup1PGP = new Pose(100, 59, Math.toRadians(0));
+    private final Pose pickup2PGP = new Pose(124, 59, Math.toRadians(0));
+    private final Pose pickup1GPP = new Pose(100, 39, Math.toRadians(0));
+    private final Pose pickup2GPP = new Pose(124, 39, Math.toRadians(0));
 
     // === AprilTag IDs ===
     private static final int PPG_TAG_ID = 23;
@@ -89,12 +97,7 @@ public class AutonRedLong extends NextFTCOpMode {
 
     // === Path Building ===
     private void buildPaths() {
-        Pose scoring1 = new Pose(90, 90, Math.toRadians(45));
-        Pose scoring2 = new Pose(96, 49, Math.toRadians(45));
 
-        // PPG
-        Pose pickup1PPG = new Pose(100, 83, Math.toRadians(0));
-        Pose pickup2PPG = new Pose(124, 83, Math.toRadians(0));
 
         alignPPG = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(startPose, scoring1))
@@ -121,9 +124,7 @@ public class AutonRedLong extends NextFTCOpMode {
                 .setConstantHeadingInterpolation(scoring1.getHeading())
                 .build();
 
-        // PGP
-        Pose pickup1PGP = new Pose(100, 59, Math.toRadians(0));
-        Pose pickup2PGP = new Pose(124, 59, Math.toRadians(0));
+
 
         alignPGP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(startPose, scoring1))
@@ -156,9 +157,7 @@ public class AutonRedLong extends NextFTCOpMode {
                 .addPath(new BezierLine(startPose, scoring1))
                 .setLinearHeadingInterpolation(startPose.getHeading(), scoring1.getHeading())
                 .build();
-        // GPP
-        Pose pickup1GPP = new Pose(100, 39, Math.toRadians(0));
-        Pose pickup2GPP = new Pose(124, 39, Math.toRadians(0));
+
 
         toPickup1GPP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(scoring1, pickup1PGP))

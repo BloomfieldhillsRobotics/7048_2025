@@ -26,9 +26,9 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name = "RedAutonShort")
-public class AutonRedShort extends NextFTCOpMode {
-    public AutonRedShort() {
+@Autonomous(name = "RedAutonLong")
+public class AutoBlueLong extends NextFTCOpMode {
+    public AutoBlueLong() {
         addComponents(
                 new SubsystemComponent(PurpleProtonRobot.INSTANCE),
                 BulkReadComponent.INSTANCE,
@@ -41,15 +41,15 @@ public class AutonRedShort extends NextFTCOpMode {
     private final Timer pathTimer = new Timer();
     private final Timer opmodeTimer = new Timer();
     // === Poses ===
-    private final Pose startPose = new Pose(128, 116, Math.toRadians(135));
-    private final Pose scoring1 = new Pose(116, 115, Math.toRadians(45));
-    private final Pose scoring2 = new Pose(96, 49, Math.toRadians(45));
-    private final Pose pickup1PPG = new Pose(100, 83, Math.toRadians(0));
-    private final Pose pickup2PPG = new Pose(124, 83, Math.toRadians(0));
-    private final Pose pickup1PGP = new Pose(100, 59, Math.toRadians(0));
-    private final Pose pickup2PGP = new Pose(124, 59, Math.toRadians(0));
-    private final Pose pickup1GPP = new Pose(100, 36, Math.toRadians(0));
-    private final Pose pickup2GPP = new Pose(124, 36, Math.toRadians(0));
+    private final Pose startPose = new Pose(88, 7, Math.toRadians(90));
+    private final Pose scoring1 = new Pose(54, 90, Math.toRadians(135));
+    private final Pose scoring2 = new Pose(96, 49, Math.toRadians(135));
+    private final Pose pickup1PPG = new Pose(100, 83, Math.toRadians(180));
+    private final Pose pickup2PPG = new Pose(124, 83, Math.toRadians(180));
+    private final Pose pickup1PGP = new Pose(100, 59, Math.toRadians(180));
+    private final Pose pickup2PGP = new Pose(124, 59, Math.toRadians(180));
+    private final Pose pickup1GPP = new Pose(100, 39, Math.toRadians(180));
+    private final Pose pickup2GPP = new Pose(124, 39, Math.toRadians(180));
 
     // === AprilTag IDs ===
     private static final int PPG_TAG_ID = 23;
@@ -98,6 +98,7 @@ public class AutonRedShort extends NextFTCOpMode {
     // === Path Building ===
     private void buildPaths() {
 
+
         alignPPG = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(startPose, scoring1))
                 .setLinearHeadingInterpolation(startPose.getHeading(), scoring1.getHeading())
@@ -122,6 +123,8 @@ public class AutonRedShort extends NextFTCOpMode {
                 .addPath(new BezierLine(scoring1, scoring2))
                 .setConstantHeadingInterpolation(scoring1.getHeading())
                 .build();
+
+
 
         alignPGP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(startPose, scoring1))
@@ -154,6 +157,7 @@ public class AutonRedShort extends NextFTCOpMode {
                 .addPath(new BezierLine(startPose, scoring1))
                 .setLinearHeadingInterpolation(startPose.getHeading(), scoring1.getHeading())
                 .build();
+
 
         toPickup1GPP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(scoring1, pickup1PGP))
@@ -242,11 +246,11 @@ public class AutonRedShort extends NextFTCOpMode {
                     autonomousCommand = new SequentialGroup(
                             new FollowPath(alignPPG, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.BasketDrop,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             new FollowPath(alignPPG, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeRun,
                             new FollowPath(toPickup1PPG, true, .8),
@@ -254,11 +258,11 @@ public class AutonRedShort extends NextFTCOpMode {
                             PurpleProtonRobot.INSTANCE.IntakeStop,
                             new FollowPath(backToScorePPG, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             new FollowPath(leavePPG, true, .8)
                     );
                     break;
@@ -266,22 +270,22 @@ public class AutonRedShort extends NextFTCOpMode {
                     autonomousCommand = new SequentialGroup(
                             new FollowPath(alignPGP, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.BasketDrop,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             new FollowPath(alignPGP, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeRun,
                             new FollowPath(toPickup1PGP, true, .8),
                             new FollowPath(scoopPGP, true, 0.3),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
                             new FollowPath(backToScorePGP, true, .8),
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             new FollowPath(leavePGP, true, .8)
                     );
                     break;
@@ -290,22 +294,22 @@ public class AutonRedShort extends NextFTCOpMode {
                     autonomousCommand = new SequentialGroup(
                             new FollowPath(alignGPP, true, .8),
                             PurpleProtonRobot.INSTANCE.BasketDrop,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeRun,
                             new FollowPath(toPickup1GPP, true, .8),
                             new FollowPath(scoopGPP, true, 0.3),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
                             new FollowPath(backToScoreGPP, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             new FollowPath(leaveGPP, true, .8)
                     );
                     break;
