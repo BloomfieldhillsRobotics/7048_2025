@@ -12,6 +12,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.LLStatus;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
@@ -40,6 +41,7 @@ import dev.nextftc.hardware.driving.DriverControlledCommand;
 
 @Autonomous(name = "Autonomous 1", preselectTeleOp = "Los Protos")
 @Configurable //Panels
+@Disabled
 public class AutoProgram extends NextFTCOpMode {
     private TelemetryManager telemetryM;
     public Limelight3A limelight;

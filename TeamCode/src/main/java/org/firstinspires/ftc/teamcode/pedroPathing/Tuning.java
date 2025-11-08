@@ -25,6 +25,7 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.telemetry.SelectableOpMode;
 import com.pedropathing.util.PoseHistory;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -39,6 +40,7 @@ import java.util.List;
  */
 @Configurable
 @TeleOp(name = "Tuning", group = "Pedro Pathing")
+@Disabled
 public class Tuning extends SelectableOpMode {
     public static Follower follower;
 
@@ -129,6 +131,7 @@ public class Tuning extends SelectableOpMode {
  * @author Baron Henderson - 20077 The Indubitables
  * @version 1.0, 5/6/2024
  */
+@Disabled
 class LocalizationTest extends OpMode {
     @Override
     public void init() {}
@@ -731,6 +734,7 @@ class LateralZeroPowerAccelerationTuner extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/12/2024
  */
+@Disabled
 class TranslationalTuner extends OpMode {
     public static double DISTANCE = 40;
     private boolean forward = true;
@@ -1006,6 +1010,7 @@ class Line extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/13/2024
  */
+
 class CentripetalTuner extends OpMode {
     public static double DISTANCE = 20;
     private boolean forward = true;
