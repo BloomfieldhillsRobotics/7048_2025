@@ -16,7 +16,10 @@ import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
 
 import java.util.List;
 
+import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
@@ -77,7 +80,11 @@ public class AutonRed extends NextFTCOpMode {
         telemetry.addData(caption, value);
         if (panelsTelemetry != null) panelsTelemetry.debug(caption + ": " + value);
     }
-
+    public final Command PPGIntakeSequence =
+            new SequentialGroup(
+                    PedroComponent.follower().followPath(alignPPG, true),
+                    PurpleProtonRobot.INSTANCE.IntakeRun
+            ).named("PPGIntakeSequence");
     // === Path State Machine ===
     private void autonomousPathUpdate() {
         if (foundID == 0) return;
@@ -86,7 +93,9 @@ public class AutonRed extends NextFTCOpMode {
             case 0: /* This case starts the alignment to the scoring position */
                 if (true) {
                     switch (foundID) {
-                        case PPG_TAG_ID: PedroComponent.follower().followPath(alignPPG, true); break;
+                        case PPG_TAG_ID:
+                            PPGIntakeSequence().schedule;
+                                     break;
                         case PGP_TAG_ID: PedroComponent.follower().followPath(alignPGP, true); break;
                         case GPP_TAG_ID: PedroComponent.follower().followPath(alignGPP, true); break;
                     }
