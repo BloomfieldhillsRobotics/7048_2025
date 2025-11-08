@@ -94,8 +94,8 @@ public class AutonRed extends NextFTCOpMode {
         Pose scoring2 = new Pose(96, 49, Math.toRadians(45));
 
         // PPG
-        Pose pickup1GPP = new Pose(100, 39, Math.toRadians(0));
-        Pose pickup2GPP = new Pose(124, 39, Math.toRadians(0));
+        Pose pickup1PPG = new Pose(100, 83, Math.toRadians(0));
+        Pose pickup2PPG = new Pose(124, 83, Math.toRadians(0));
 
         alignPPG = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(startPose, scoring1))
@@ -103,18 +103,18 @@ public class AutonRed extends NextFTCOpMode {
                 .build();
 
         toPickup1PPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(scoring1, pickup1GPP))
-                .setLinearHeadingInterpolation(scoring1.getHeading(), pickup1GPP.getHeading())
+                .addPath(new BezierLine(scoring1, pickup1PPG))
+                .setLinearHeadingInterpolation(scoring1.getHeading(), pickup1PPG.getHeading())
                 .build();
 
         scoopPPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup1PPG, pickup2GPP))
-                .setConstantHeadingInterpolation(pickup1GPP.getHeading())
+                .addPath(new BezierLine(pickup1PPG, pickup2PPG))
+                .setConstantHeadingInterpolation(pickup1PPG.getHeading())
                 .build();
 
         backToScorePPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup2GPP, scoring1))
-                .setLinearHeadingInterpolation(pickup2GPP.getHeading(), scoring1.getHeading())
+                .addPath(new BezierLine(pickup2PPG, scoring1))
+                .setLinearHeadingInterpolation(pickup2PPG.getHeading(), scoring1.getHeading())
                 .build();
 
         leavePPG = PedroComponent.follower().pathBuilder()
@@ -123,8 +123,8 @@ public class AutonRed extends NextFTCOpMode {
                 .build();
 
         // PGP
-        Pose pickup1PPG = new Pose(100, 83, Math.toRadians(0));
-        Pose pickup2PPG = new Pose(124, 83, Math.toRadians(0));
+        Pose pickup1PGP = new Pose(100, 59, Math.toRadians(0));
+        Pose pickup2PGP = new Pose(124, 59, Math.toRadians(0));
 
         alignPGP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(startPose, scoring1))
@@ -132,18 +132,18 @@ public class AutonRed extends NextFTCOpMode {
                 .build();
 
         toPickup1PGP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(scoring1, pickup1PPG))
-                .setLinearHeadingInterpolation(scoring1.getHeading(), pickup1PPG.getHeading())
+                .addPath(new BezierLine(scoring1, pickup1PGP))
+                .setLinearHeadingInterpolation(scoring1.getHeading(), pickup1PGP.getHeading())
                 .build();
 
         scoopPGP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup1PPG, pickup2PPG))
-                .setConstantHeadingInterpolation(pickup1PPG.getHeading())
+                .addPath(new BezierLine(pickup1PGP, pickup2PGP))
+                .setConstantHeadingInterpolation(pickup1PGP.getHeading())
                 .build();
 
         backToScorePGP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup2PPG, scoring1))
-                .setLinearHeadingInterpolation(pickup2PPG.getHeading(), scoring1.getHeading())
+                .addPath(new BezierLine(pickup2PGP, scoring1))
+                .setLinearHeadingInterpolation(pickup2PGP.getHeading(), scoring1.getHeading())
                 .build();
 
         leavePGP = PedroComponent.follower().pathBuilder()
@@ -151,28 +151,29 @@ public class AutonRed extends NextFTCOpMode {
                 .setConstantHeadingInterpolation(scoring1.getHeading())
                 .build();
 
-        // GPP
-        Pose pickup1PGP = new Pose(100, 59, Math.toRadians(0));
-        Pose pickup2PGP = new Pose(124, 59, Math.toRadians(0));
+
 
         alignGPP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(startPose, scoring1))
                 .setLinearHeadingInterpolation(startPose.getHeading(), scoring1.getHeading())
                 .build();
+        // GPP
+        Pose pickup1GPP = new Pose(100, 39, Math.toRadians(0));
+        Pose pickup2GPP = new Pose(124, 39, Math.toRadians(0));
 
         toPickup1GPP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(scoring1, pickup1PGP))
-                .setLinearHeadingInterpolation(scoring1.getHeading(), pickup1PGP.getHeading())
+                .setLinearHeadingInterpolation(scoring1.getHeading(), pickup1GPP.getHeading())
                 .build();
 
         scoopGPP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup1PGP, pickup2PGP))
-                .setConstantHeadingInterpolation(pickup1PGP.getHeading())
+                .addPath(new BezierLine(pickup1GPP, pickup2GPP))
+                .setConstantHeadingInterpolation(pickup1GPP.getHeading())
                 .build();
 
         backToScoreGPP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(pickup2PGP, scoring1))
-                .setLinearHeadingInterpolation(pickup2PGP.getHeading(), scoring1.getHeading())
+                .setLinearHeadingInterpolation(pickup2GPP.getHeading(), scoring1.getHeading())
                 .build();
 
         leaveGPP = PedroComponent.follower().pathBuilder()
@@ -245,6 +246,7 @@ public class AutonRed extends NextFTCOpMode {
             switch (foundID) {
                 case PPG_TAG_ID:
                     autonomousCommand = new SequentialGroup(
+                            new FollowPath(alignPPG, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
                             PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
@@ -252,32 +254,43 @@ public class AutonRed extends NextFTCOpMode {
                             PurpleProtonRobot.INSTANCE.BasketDrop,
                             PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.BasketUp,
-                            new FollowPath(alignPPG, true),
+                            new FollowPath(alignPPG, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeRun,
-                            new FollowPath(toPickup1PPG, true),
-                            new FollowPath(scoopPPG, true, 0.5),
+                            new FollowPath(toPickup1PPG, true, .8),
+                            new FollowPath(scoopPPG, true, 0.3),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
-                            new FollowPath(backToScorePPG, true),
+                            new FollowPath(backToScorePPG, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
                             PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
                             PurpleProtonRobot.INSTANCE.LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
                             PurpleProtonRobot.INSTANCE.LongShot,
-                            new FollowPath(leavePPG, true)
+                            new FollowPath(leavePPG, true, .8)
                     );
                     break;
                 case PGP_TAG_ID:
                     autonomousCommand = new SequentialGroup(
-
-
-                            new FollowPath(alignPGP, true),
+                            new FollowPath(alignPGP, true, .8),
+                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            PurpleProtonRobot.INSTANCE.BasketDrop,
+                            PurpleProtonRobot.INSTANCE.BasketUp,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            new FollowPath(alignPGP, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeRun,
-                            new FollowPath(toPickup1PGP, true),
-                            new FollowPath(scoopPGP, true, 0.5),
+                            new FollowPath(toPickup1PGP, true, .8),
+                            new FollowPath(scoopPGP, true, 0.3),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
-                            new FollowPath(backToScorePGP, true),
-                            new FollowPath(leavePGP, true)
+                            new FollowPath(backToScorePGP, true, .8),
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            new FollowPath(leavePGP, true, .8)
                     );
                     break;
                 case GPP_TAG_ID:
@@ -289,6 +302,13 @@ public class AutonRed extends NextFTCOpMode {
                             new FollowPath(scoopGPP, true, 0.5),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
                             new FollowPath(backToScoreGPP, true),
+                            new FollowPath(leaveGPP, true),
+                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+                            PurpleProtonRobot.INSTANCE.LongShot,
+                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+                            PurpleProtonRobot.INSTANCE.LongShot,
                             new FollowPath(leaveGPP, true)
                     );
                     break;

@@ -62,7 +62,7 @@ public class PurpleProtonRobot extends SubsystemGroup {
                     Elevator.INSTANCE.up,
                     new Delay(.8),
                     Elevator.INSTANCE.down,
-                    new Delay(.3),
+                    new Delay(.5),
                     FlyWheel.INSTANCE.stop
             ).named("LongShot");
 
