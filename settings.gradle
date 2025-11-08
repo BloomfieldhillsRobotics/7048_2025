@@ -1,2 +1,11 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+// Your existing content
 include ':FtcRobotController'
 include ':TeamCode'
