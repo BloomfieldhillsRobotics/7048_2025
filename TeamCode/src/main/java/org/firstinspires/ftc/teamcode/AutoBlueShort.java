@@ -43,7 +43,7 @@ public class AutoBlueShort extends NextFTCOpMode {
     // === Poses ===
     private final Pose startPose = new Pose(18, 116, Math.toRadians(45));
     private final Pose scoring1 = new Pose(28, 115, Math.toRadians(135));
-    private final Pose scoring2 = new Pose(48, 49, Math.toRadians(135));
+    private final Pose scoring2 = new Pose(48, 70, Math.toRadians(135));
     private final Pose pickup1PPG = new Pose(46, 83, Math.toRadians(180));
     private final Pose pickup2PPG = new Pose(19, 83, Math.toRadians(180));
     private final Pose pickup1PGP = new Pose(46, 59, Math.toRadians(180));
@@ -111,7 +111,7 @@ public class AutoBlueShort extends NextFTCOpMode {
 
         scoopPPG = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup2PPG))
-                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup2PPG.getHeading())
                 .build();
 
         backToScorePPG = PedroComponent.follower().pathBuilder()
@@ -121,7 +121,7 @@ public class AutoBlueShort extends NextFTCOpMode {
 
         leavePPG = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring2))
-                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring2.getHeading())
                 .build();
 
 
@@ -138,7 +138,7 @@ public class AutoBlueShort extends NextFTCOpMode {
 
         scoopPGP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup2PGP))
-                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup2PGP.getHeading())
                 .build();
 
         backToScorePGP = PedroComponent.follower().pathBuilder()
@@ -148,7 +148,7 @@ public class AutoBlueShort extends NextFTCOpMode {
 
         leavePGP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring2))
-                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring2.getHeading())
                 .build();
 
 
@@ -166,7 +166,7 @@ public class AutoBlueShort extends NextFTCOpMode {
 
         scoopGPP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup2GPP))
-                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup2GPP.getHeading())
                 .build();
 
         backToScoreGPP = PedroComponent.follower().pathBuilder()
@@ -176,7 +176,7 @@ public class AutoBlueShort extends NextFTCOpMode {
 
         leaveGPP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring2))
-                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring2.getHeading())
                 .build();
     }
 
@@ -190,6 +190,7 @@ public class AutoBlueShort extends NextFTCOpMode {
                 if (fiducials != null && !fiducials.isEmpty()) {
                     int tagID = fiducials.get(0).getFiducialId();
                     if (tagID == PPG_TAG_ID || tagID == PGP_TAG_ID || tagID == GPP_TAG_ID) {
+//                    if (tagID == PPG_TAG_ID || tagID == GPP_TAG_ID) {
                         foundID = tagID;
                         log("Detected Tag", tagID);
                         return;
@@ -200,7 +201,8 @@ public class AutoBlueShort extends NextFTCOpMode {
             timeout++;
         }
         if(foundID == 0 && timeout > DETECTION_TIMEOUT)
-            foundID = PGP_TAG_ID;
+//            foundID = PGP_TAG_ID;
+            foundID = PPG_TAG_ID;
         log("Warning", "No tag detected – using PPG");
     }
 
@@ -251,19 +253,20 @@ public class AutoBlueShort extends NextFTCOpMode {
                             PurpleProtonRobot.INSTANCE.ShortShot,
                             PurpleProtonRobot.INSTANCE.BasketDrop,
                             PurpleProtonRobot.INSTANCE.ShortShot,
-                            new FollowPath(alignPPG, true, .8),
-                            PurpleProtonRobot.INSTANCE.IntakeRun,
-                            new FollowPath(toPickup1PPG, true, .8),
-                            new FollowPath(scoopPPG, true, 0.3),
-                            new FollowPath(toPickup1PPG, true, .8),
-                            PurpleProtonRobot.INSTANCE.IntakeStop,
-                            new FollowPath(backToScorePPG, true, .8),
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+//                            PurpleProtonRobot.INSTANCE.IntakeRun,
+//                            new FollowPath(toPickup1PPG, true, .8),
+//                            new FollowPath(scoopPPG, true, 0.3),
+//                            new Delay(1),
+//                            new FollowPath(scoopPPG, true, 0.3),
+//                            new FollowPath(toPickup1PPG, true, .8),
+//                            PurpleProtonRobot.INSTANCE.IntakeStop,
+//                            new FollowPath(backToScorePPG, true, .8),
+//                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+//                            PurpleProtonRobot.INSTANCE.ShortShot,
+//                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+//                            PurpleProtonRobot.INSTANCE.ShortShot,
+//                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+//                            PurpleProtonRobot.INSTANCE.ShortShot,
                             new FollowPath(leavePPG, true, .8)
                     );
                     break;
@@ -276,17 +279,19 @@ public class AutoBlueShort extends NextFTCOpMode {
                             PurpleProtonRobot.INSTANCE.ShortShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
                             PurpleProtonRobot.INSTANCE.ShortShot,
-                            new FollowPath(alignPGP, true, .8),
-                            PurpleProtonRobot.INSTANCE.IntakeRun,
-                            new FollowPath(toPickup1PGP, true, .8),
-                            new FollowPath(scoopPGP, true, 0.3),
-                            PurpleProtonRobot.INSTANCE.IntakeStop,
-                            new FollowPath(backToScorePGP, true, .8),
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+//                            PurpleProtonRobot.INSTANCE.IntakeRun,
+//                            new FollowPath(toPickup1PGP, true, .8),
+//                            new FollowPath(scoopPGP, true, 0.3),
+//                            new Delay(1),
+//                            new FollowPath(scoopPGP, true, 0.3),
+//                            new FollowPath(toPickup1PGP, true, .8),
+//                            PurpleProtonRobot.INSTANCE.IntakeStop,
+//                            new FollowPath(backToScorePGP, true, .8),
+//                            PurpleProtonRobot.INSTANCE.ShortShot,
+//                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+//                            PurpleProtonRobot.INSTANCE.ShortShot,
+//                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+//                            PurpleProtonRobot.INSTANCE.ShortShot,
                             new FollowPath(leavePGP, true, .8)
                     );
                     break;
@@ -300,17 +305,20 @@ public class AutoBlueShort extends NextFTCOpMode {
                             PurpleProtonRobot.INSTANCE.ShortShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
                             PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeRun,
-                            new FollowPath(toPickup1GPP, true, .8),
-                            new FollowPath(scoopGPP, true, 0.3),
-                            PurpleProtonRobot.INSTANCE.IntakeStop,
-                            new FollowPath(backToScoreGPP, true, .8),
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
+//                            PurpleProtonRobot.INSTANCE.IntakeRun,
+//                            new FollowPath(toPickup1GPP, true, .8),
+//                            new FollowPath(scoopGPP, true, 0.3),
+//                            new Delay(1),
+//                            new FollowPath(scoopGPP, true, 0.3),
+//                            new FollowPath(toPickup1GPP, true, .8),
+//                            PurpleProtonRobot.INSTANCE.IntakeStop,
+//                            new FollowPath(backToScoreGPP, true, .8),
+//                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+//                            PurpleProtonRobot.INSTANCE.ShortShot,
+//                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+//                            PurpleProtonRobot.INSTANCE.ShortShot,
+//                            PurpleProtonRobot.INSTANCE.IntakeSeq,
+//                            PurpleProtonRobot.INSTANCE.ShortShot,
                             new FollowPath(leaveGPP, true, .8)
                     );
                     break;

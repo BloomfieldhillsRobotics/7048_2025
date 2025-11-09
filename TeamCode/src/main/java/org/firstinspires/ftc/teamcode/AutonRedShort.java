@@ -44,7 +44,7 @@ public class AutonRedShort extends NextFTCOpMode {
     private final Pose startPose = new Pose(128, 116, Math.toRadians(135));
     private final Pose scoring1 = new Pose(116, 115, Math.toRadians(45));
     private final Pose scoring2 = new Pose(96, 49, Math.toRadians(45));
-    private final Pose pickup1PPG = new Pose(100, 83, Math.toRadians(0));
+    private final Pose pickup1PPG = new Pose(100, 10, Math.toRadians(0));
     private final Pose pickup2PPG = new Pose(124, 83, Math.toRadians(0));
     private final Pose pickup1PGP = new Pose(100, 59, Math.toRadians(0));
     private final Pose pickup2PGP = new Pose(124, 59, Math.toRadians(0));
@@ -111,7 +111,7 @@ public class AutonRedShort extends NextFTCOpMode {
 
         scoopPPG = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup2PPG))
-                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup2PPG.getHeading())
                 .build();
 
         backToScorePPG = PedroComponent.follower().pathBuilder()
@@ -121,7 +121,7 @@ public class AutonRedShort extends NextFTCOpMode {
 
         leavePPG = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring2))
-                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring2.getHeading())
                 .build();
 
 
@@ -138,7 +138,7 @@ public class AutonRedShort extends NextFTCOpMode {
 
         scoopPGP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup2PGP))
-                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup2PGP.getHeading())
                 .build();
 
         backToScorePGP = PedroComponent.follower().pathBuilder()
@@ -148,7 +148,7 @@ public class AutonRedShort extends NextFTCOpMode {
 
         leavePGP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring2))
-                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring2.getHeading())
                 .build();
 
 
@@ -166,7 +166,7 @@ public class AutonRedShort extends NextFTCOpMode {
 
         scoopGPP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup2GPP))
-                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup2GPP.getHeading())
                 .build();
 
         backToScoreGPP = PedroComponent.follower().pathBuilder()
@@ -176,7 +176,7 @@ public class AutonRedShort extends NextFTCOpMode {
 
         leaveGPP = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring2))
-                .setConstantHeadingInterpolation(PedroComponent.follower().getHeading())
+                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring2.getHeading())
                 .build();
     }
 
@@ -251,18 +251,7 @@ public class AutonRedShort extends NextFTCOpMode {
                             PurpleProtonRobot.INSTANCE.ShortShot,
                             PurpleProtonRobot.INSTANCE.BasketDrop,
                             PurpleProtonRobot.INSTANCE.ShortShot,
-                            new FollowPath(alignPPG, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeRun,
-                            new FollowPath(toPickup1PPG, true, .8),
-                            new FollowPath(scoopPPG, true, 0.3),
-                            PurpleProtonRobot.INSTANCE.IntakeStop,
-                            new FollowPath(backToScorePPG, true, .8),
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
                             new FollowPath(leavePPG, true, .8)
                     );
                     break;
@@ -275,17 +264,6 @@ public class AutonRedShort extends NextFTCOpMode {
                             PurpleProtonRobot.INSTANCE.ShortShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
                             PurpleProtonRobot.INSTANCE.ShortShot,
-                            new FollowPath(alignPGP, true, .8),
-                            PurpleProtonRobot.INSTANCE.IntakeRun,
-                            new FollowPath(toPickup1PGP, true, .8),
-                            new FollowPath(scoopPGP, true, 0.3),
-                            PurpleProtonRobot.INSTANCE.IntakeStop,
-                            new FollowPath(backToScorePGP, true, .8),
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
                             new FollowPath(leavePGP, true, .8)
                     );
                     break;
@@ -294,17 +272,6 @@ public class AutonRedShort extends NextFTCOpMode {
                     autonomousCommand = new SequentialGroup(
                             new FollowPath(alignGPP, true, .8),
                             PurpleProtonRobot.INSTANCE.BasketDrop,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeRun,
-                            new FollowPath(toPickup1GPP, true, .8),
-                            new FollowPath(scoopGPP, true, 0.3),
-                            PurpleProtonRobot.INSTANCE.IntakeStop,
-                            new FollowPath(backToScoreGPP, true, .8),
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
                             PurpleProtonRobot.INSTANCE.ShortShot,
                             PurpleProtonRobot.INSTANCE.IntakeSeq,
                             PurpleProtonRobot.INSTANCE.ShortShot,
