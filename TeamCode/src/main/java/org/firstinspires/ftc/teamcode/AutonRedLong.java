@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.AutonomousPaths;
 import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
 
 import java.util.List;
@@ -25,6 +26,8 @@ import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
+
+import static org.firstinspires.ftc.teamcode.constants.AutoPoses.RedLong.*;
 
 @Autonomous(name = "AutoRedLong", preselectTeleOp = "Los Protos")
 public class AutonRedLong extends NextFTCOpMode {
@@ -40,16 +43,6 @@ public class AutonRedLong extends NextFTCOpMode {
     private final ElapsedTime waitTimer = new ElapsedTime();
     private final Timer pathTimer = new Timer();
     private final Timer opmodeTimer = new Timer();
-    // === Poses ===
-    private final Pose startPose = new Pose(88, 7, Math.toRadians(90));
-    private final Pose scoring1 = new Pose(90, 90, Math.toRadians(45));
-    private final Pose scoring2 = new Pose(96, 49, Math.toRadians(45));
-    private final Pose pickup1PPG = new Pose(100, 83, Math.toRadians(0));
-    private final Pose pickup2PPG = new Pose(124, 83, Math.toRadians(0));
-    private final Pose pickup1PGP = new Pose(100, 59, Math.toRadians(0));
-    private final Pose pickup2PGP = new Pose(124, 59, Math.toRadians(0));
-    private final Pose pickup1GPP = new Pose(100, 39, Math.toRadians(0));
-    private final Pose pickup2GPP = new Pose(124, 39, Math.toRadians(0));
 
     // === AprilTag IDs ===
     private static final int PPG_TAG_ID = 23;
@@ -96,87 +89,27 @@ public class AutonRedLong extends NextFTCOpMode {
     }
     // === Path Building ===
     private void buildPaths() {
-
-
-        alignPPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(startPose, scoring1))
-                .setLinearHeadingInterpolation(startPose.getHeading(), scoring1.getHeading())
-                .build();
-
-        toPickup1PPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup1PPG))
-                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup1PPG.getHeading())
-                .build();
-
-        scoopPPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup2PPG))
-                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup2PPG.getHeading())
-                .build();
-
-        backToScorePPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring1))
-                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring1.getHeading())
-                .build();
-
-        leavePPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring2))
-                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring2.getHeading())
-                .build();
-
-
-
-        alignPGP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(startPose, scoring1))
-                .setLinearHeadingInterpolation(startPose.getHeading(), scoring1.getHeading())
-                .build();
-
-        toPickup1PGP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup1PGP))
-                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup1PGP.getHeading())
-                .build();
-
-        scoopPGP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup2PGP))
-                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup2PGP.getHeading())
-                .build();
-
-        backToScorePGP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring1))
-                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring1.getHeading())
-                .build();
-
-        leavePGP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring2))
-                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring2.getHeading())
-                .build();
-
-
-
-        alignGPP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(startPose, scoring1))
-                .setLinearHeadingInterpolation(startPose.getHeading(), scoring1.getHeading())
-                .build();
-
-
-        toPickup1GPP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup1PGP))
-                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup1GPP.getHeading())
-                .build();
-
-        scoopGPP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(PedroComponent.follower().getPose(), pickup2GPP))
-                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), pickup1PGP.getHeading())
-                .build();
-
-        backToScoreGPP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring1))
-                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring1.getHeading())
-                .build();
-
-        leaveGPP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(PedroComponent.follower().getPose(), scoring2))
-                .setLinearHeadingInterpolation(PedroComponent.follower().getHeading(), scoring2.getHeading())
-                .build();
+        AutonomousPaths.PathContainer paths = AutonomousPaths.buildPaths(
+                startPose, scoring1, scoring2,
+                pickup1PPG, pickup2PPG,
+                pickup1PGP, pickup2PGP,
+                pickup1GPP, pickup2GPP
+        );
+        alignPPG = paths.alignPPG;
+        toPickup1PPG = paths.toPickup1PPG;
+        scoopPPG = paths.scoopPPG;
+        backToScorePPG = paths.backToScorePPG;
+        leavePPG = paths.leavePPG;
+        alignPGP = paths.alignPGP;
+        toPickup1PGP = paths.toPickup1PGP;
+        scoopPGP = paths.scoopPGP;
+        backToScorePGP = paths.backToScorePGP;
+        leavePGP = paths.leavePGP;
+        alignGPP = paths.alignGPP;
+        toPickup1GPP = paths.toPickup1GPP;
+        scoopGPP = paths.scoopGPP;
+        backToScoreGPP = paths.backToScoreGPP;
+        leaveGPP = paths.leaveGPP;
     }
 
     // === AprilTag Detection (runs in start()) ===
