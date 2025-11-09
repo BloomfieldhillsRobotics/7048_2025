@@ -115,5 +115,68 @@ public class PurpleProtonRobot extends SubsystemGroup {
             new SequentialGroup(
                     Basket.INSTANCE.up
             ).named("BasketUp");
+    public final Command AutoPPG3LongShot =
+            new SequentialGroup(
+                    IntakeSeq,
+                    LongShot,
+                    IntakeSeq,
+                    LongShot,
+                    BasketDrop,
+                    LongShot
+            ).named("AutoPPG3Shot");
+    public final Command AutoPGP3LongShot =
+            new SequentialGroup(
+                    IntakeSeq,
+                    LongShot,
+                    BasketDrop,
+                    LongShot,
+                    IntakeSeq,
+                    LongShot
+            ).named("AutoPGP3LongShot");
+    public final Command AutoGPP3LongShot =
+            new SequentialGroup(
+                    BasketDrop,
+                    LongShot,
+                    IntakeSeq,
+                    LongShot,
+                    IntakeSeq,
+                    LongShot
+            ).named("AutoPGP3LongShot");
+    public final Command AutoPPG3ShortShot =
+            new SequentialGroup(
+                    IntakeSeq,
+                    LongShot,
+                    IntakeSeq,
+                    LongShot,
+                    BasketDrop,
+                    LongShot
+            ).named("AutoPPG3ShortShot");
+    public final Command AutoPGP3ShortShot =
+            new SequentialGroup(
+                    IntakeSeq,
+                    LongShot,
+                    BasketDrop,
+                    LongShot,
+                    IntakeSeq,
+                    LongShot
+            ).named("AutoPGP3ShortShot");
+    public final Command AutoGPP3ShortShot =
+            new SequentialGroup(
+                    BasketDrop,
+                    LongShot,
+                    IntakeSeq,
+                    LongShot,
+                    IntakeSeq,
+                    LongShot
+            ).named("AutoPGP3ShortShot");
+    public final Command Auto3LongShot =
+            new SequentialGroup(
+                    IntakeSeq,
+                    LongShot,
+                    IntakeSeq,
+                    LongShot,
+                    BasketDrop,
+                    LongShot
+            ).named("Auto3LongShot");
 
 }

@@ -172,47 +172,58 @@ public class AutonRedShort extends NextFTCOpMode {
             // 1. Create a placeholder for the command we are about to build
             Command autonomousCommand;
 
-            // 2. Build the correct sequence of commands based on the detected tag
-            switch (foundID) {
-                case PPG_TAG_ID:
-                    autonomousCommand = new SequentialGroup(
-                            new FollowPath(alignPPG, true, .8),
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.BasketDrop,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeRun,
-                            new FollowPath(leavePPG, true, .8)
-                    );
-                    break;
-                case PGP_TAG_ID:
-                    autonomousCommand = new SequentialGroup(
-                            new FollowPath(alignPGP, true, .8),
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.BasketDrop,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            new FollowPath(leavePGP, true, .8)
-                    );
-                    break;
-                case GPP_TAG_ID:
-                default: // Default to GPP if something goes wrong
-                    autonomousCommand = new SequentialGroup(
-                            new FollowPath(alignGPP, true, .8),
-                            PurpleProtonRobot.INSTANCE.BasketDrop,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            PurpleProtonRobot.INSTANCE.IntakeSeq,
-                            PurpleProtonRobot.INSTANCE.ShortShot,
-                            new FollowPath(leaveGPP, true, .8)
-                    );
-                    break;
-            }
+// 2. Build the correct sequence of commands based on the detected tag
+        switch (foundID) {
+            case PPG_TAG_ID:
+                autonomousCommand = new SequentialGroup(
+                        new FollowPath(alignPPG, true, .8),
+                        PurpleProtonRobot.INSTANCE.AutoPPG3ShortShot,
+//                            PurpleProtonRobot.INSTANCE.IntakeRun,
+//                            new FollowPath(toPickup1PPG, true, .8),
+//                            new FollowPath(scoopPPG, true, 0.3),
+//                            new Delay(1),
+//                            new FollowPath(scoopPPG, true, 0.3),
+//                            new FollowPath(toPickup1PPG, true, .8),
+//                            PurpleProtonRobot.INSTANCE.IntakeStop,
+//                            new FollowPath(backToScorePPG, true, .8),
+//                            PurpleProtonRobot.INSTANCE.Auto3ShortShot,
+                        new FollowPath(leavePPG, true, .8)
+                );
+                break;
+            case PGP_TAG_ID:
+                autonomousCommand = new SequentialGroup(
+                        new FollowPath(alignPGP, true, .8),
+                        PurpleProtonRobot.INSTANCE.AutoPGP3ShortShot,
+//                            PurpleProtonRobot.INSTANCE.IntakeRun,
+//                            new FollowPath(toPickup1PGP, true, .8),
+//                            new FollowPath(scoopPGP, true, 0.3),
+//                            new Delay(1),
+//                            new FollowPath(scoopPGP, true, 0.3),
+//                            new FollowPath(toPickup1PGP, true, .8),
+//                            PurpleProtonRobot.INSTANCE.IntakeStop,
+//                            new FollowPath(backToScorePGP, true, .8),
+//                            PurpleProtonRobot.INSTANCE.Auto3ShortShot,
+                        new FollowPath(leavePGP, true, .8)
+                );
+                break;
+            case GPP_TAG_ID:
+            default: // Default to GPP if something goes wrong
+                autonomousCommand = new SequentialGroup(
+                        new FollowPath(alignGPP, true, .8),
+                        PurpleProtonRobot.INSTANCE.AutoGPP3ShortShot,
+//                            PurpleProtonRobot.INSTANCE.IntakeRun,
+//                            new FollowPath(toPickup1GPP, true, .8),
+//                            new FollowPath(scoopGPP, true, 0.3),
+//                            new Delay(1),
+//                            new FollowPath(scoopGPP, true, 0.3),
+//                            new FollowPath(toPickup1GPP, true, .8),
+//                            PurpleProtonRobot.INSTANCE.IntakeStop,
+//                            new FollowPath(backToScoreGPP, true, .8),
+//                            PurpleProtonRobot.INSTANCE.Auto3ShortShot,
+                        new FollowPath(leaveGPP, true, .8)
+                );
+                break;
+        }
 
             // 3. Schedule the one, big command to run. The scheduler handles the rest.
             autonomousCommand.schedule();
