@@ -2,7 +2,6 @@
 package org.firstinspires.ftc.teamcode;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -14,7 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.AutonomousPaths;
 import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
-
+import org.firstinspires.ftc.teamcode.subsystems.Drawing;
 import java.util.List;
 
 import dev.nextftc.core.commands.Command;
@@ -40,7 +39,6 @@ public class AutoBlueLong extends NextFTCOpMode {
         );
     }
     // === Timers ===
-    private final ElapsedTime waitTimer = new ElapsedTime();
     private final Timer pathTimer = new Timer();
     private final Timer opmodeTimer = new Timer();
     // === AprilTag IDs ===
@@ -135,7 +133,6 @@ public class AutoBlueLong extends NextFTCOpMode {
             foundID = PGP_TAG_ID;
         log("Warning", "No tag detected – using PPG");
     }
-
     // ==============================================================
     //  OpMode Lifecycle – ONLY THESE 5 METHODS
     // ==============================================================
@@ -145,7 +142,7 @@ public class AutoBlueLong extends NextFTCOpMode {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         PedroComponent.follower().setMaxPower(0.75);
         PedroComponent.follower().setStartingPose(startPose);
-
+        Drawing.drawOnlyCurrent(PedroComponent.follower().getPose());
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(APRILTAG_PIPELINE);
         limelight.start();
@@ -161,12 +158,14 @@ public class AutoBlueLong extends NextFTCOpMode {
     public void onWaitForStart() {
         log("Status", "INIT_LOOP: Press START");
         telemetry.update();
+        Drawing.drawOnlyCurrent(PedroComponent.follower().getPose());
     }
 
     @Override
     public void onStartButtonPressed() {
         opmodeTimer.resetTimer();
         detectAprilTag(); // This should run before building the command
+        Drawing.drawOnlyCurrent(PedroComponent.follower().getPose());
         log("Status", "START: Running");
 
         // 1. Create a placeholder for the command we are about to build
@@ -178,15 +177,6 @@ public class AutoBlueLong extends NextFTCOpMode {
                 autonomousCommand = new SequentialGroup(
                         new FollowPath(alignPPG, true, .8),
                         PurpleProtonRobot.INSTANCE.AutoPPG3LongShot,
-//                        PurpleProtonRobot.INSTANCE.IntakeRun,
-//                        new FollowPath(toPickup1PPG, true, .8),
-//                        new FollowPath(scoopPPG, true, 0.3),
-//                        new Delay(1),
-//                        new FollowPath(scoopPPG, true, 0.3),
-//                        new FollowPath(toPickup1PPG, true, .8),
-//                        PurpleProtonRobot.INSTANCE.IntakeStop,
-//                        new FollowPath(backToScorePPG, true, .8),
-//                        PurpleProtonRobot.INSTANCE.Auto3LongShot,
                         new FollowPath(leavePPG, true, .8)
                 );
                 break;
@@ -194,15 +184,6 @@ public class AutoBlueLong extends NextFTCOpMode {
                 autonomousCommand = new SequentialGroup(
                         new FollowPath(alignPGP, true, .8),
                         PurpleProtonRobot.INSTANCE.AutoPGP3LongShot,
-//                        PurpleProtonRobot.INSTANCE.IntakeRun,
-//                        new FollowPath(toPickup1PGP, true, .8),
-//                        new FollowPath(scoopPGP, true, 0.3),
-//                        new Delay(1),
-//                        new FollowPath(scoopPGP, true, 0.3),
-//                        new FollowPath(toPickup1PGP, true, .8),
-//                        PurpleProtonRobot.INSTANCE.IntakeStop,
-//                        new FollowPath(backToScorePGP, true, .8),
-//                        PurpleProtonRobot.INSTANCE.Auto3LongShot,
                         new FollowPath(leavePGP, true, .8)
                 );
                 break;
@@ -211,15 +192,6 @@ public class AutoBlueLong extends NextFTCOpMode {
                 autonomousCommand = new SequentialGroup(
                         new FollowPath(alignGPP, true, .8),
                         PurpleProtonRobot.INSTANCE.AutoGPP3LongShot,
-//                        PurpleProtonRobot.INSTANCE.IntakeRun,
-//                        new FollowPath(toPickup1GPP, true, .8),
-//                        new FollowPath(scoopGPP, true, 0.3),
-//                        new Delay(1),
-//                        new FollowPath(scoopGPP, true, 0.3),
-//                        new FollowPath(toPickup1GPP, true, .8),
-//                        PurpleProtonRobot.INSTANCE.IntakeStop,
-//                        new FollowPath(backToScoreGPP, true, .8),
-//                        PurpleProtonRobot.INSTANCE.Auto3LongShot,
                         new FollowPath(leaveGPP, true, .8)
                 );
                 break;
@@ -233,10 +205,10 @@ public class AutoBlueLong extends NextFTCOpMode {
             // onUpdate can be simplified. The command scheduler runs automatically.
             // You only need Pedro's update and your telemetry.
             PedroComponent.follower().update();
-
             if (panelsTelemetry != null) panelsTelemetry.update();
 
             Pose pose = PedroComponent.follower().getPose();
+            Drawing.drawOnlyCurrent(pose);
             double normH = Math.toDegrees((pose.getHeading() + 2 * Math.PI) % (2 * Math.PI));
 
             log("X",            String.format("%.2f", pose.getX()));
