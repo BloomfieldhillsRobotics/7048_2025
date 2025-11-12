@@ -190,15 +190,15 @@ public class AutonRedShort extends NextFTCOpMode {
                 autonomousCommand = new SequentialGroup(
                         new FollowPath(alignPPG, true, .8),
                         PurpleProtonRobot.INSTANCE.AutoPPG3ShortShot,
-//                            PurpleProtonRobot.INSTANCE.IntakeRun,
-//                            new FollowPath(toPickup1PPG, true, .8),
-//                            new FollowPath(scoopPPG, true, 0.3),
-//                            new Delay(1),
-//                            new FollowPath(scoopPPG, true, 0.3),
-//                            new FollowPath(toPickup1PPG, true, .8),
-//                            PurpleProtonRobot.INSTANCE.IntakeStop,
-//                            new FollowPath(backToScorePPG, true, .8),
-//                            PurpleProtonRobot.INSTANCE.Auto3ShortShot,
+                            PurpleProtonRobot.INSTANCE.IntakeRun,
+                            new FollowPath(toPickup1PPG, true, .8),
+                            new FollowPath(scoopPPG, true, 0.3),
+                            new Delay(1),
+                            new FollowPath(scoopPPG, true, 0.3),
+                            new FollowPath(toPickup1PPG, true, .8),
+                            PurpleProtonRobot.INSTANCE.IntakeStop,
+                            new FollowPath(backToScorePPG, true, .8),
+                            PurpleProtonRobot.INSTANCE.Auto3ShortShot,
                         new FollowPath(leavePPG, true, .8)
                 );
                 break;
@@ -206,15 +206,15 @@ public class AutonRedShort extends NextFTCOpMode {
                 autonomousCommand = new SequentialGroup(
                         new FollowPath(alignPGP, true, .8),
                         PurpleProtonRobot.INSTANCE.AutoPGP3ShortShot,
-//                            PurpleProtonRobot.INSTANCE.IntakeRun,
-//                            new FollowPath(toPickup1PGP, true, .8),
-//                            new FollowPath(scoopPGP, true, 0.3),
-//                            new Delay(1),
-//                            new FollowPath(scoopPGP, true, 0.3),
-//                            new FollowPath(toPickup1PGP, true, .8),
-//                            PurpleProtonRobot.INSTANCE.IntakeStop,
-//                            new FollowPath(backToScorePGP, true, .8),
-//                            PurpleProtonRobot.INSTANCE.Auto3ShortShot,
+                            PurpleProtonRobot.INSTANCE.IntakeRun,
+                            new FollowPath(toPickup1PGP, true, .8),
+                            new FollowPath(scoopPGP, true, 0.3),
+                            new Delay(1),
+                            new FollowPath(scoopPGP, true, 0.3),
+                            new FollowPath(toPickup1PGP, true, .8),
+                            PurpleProtonRobot.INSTANCE.IntakeStop,
+                            new FollowPath(backToScorePGP, true, .8),
+                            PurpleProtonRobot.INSTANCE.Auto3ShortShot,
                         new FollowPath(leavePGP, true, .8)
                 );
                 break;
@@ -223,15 +223,15 @@ public class AutonRedShort extends NextFTCOpMode {
                 autonomousCommand = new SequentialGroup(
                         new FollowPath(alignGPP, true, .8),
                         PurpleProtonRobot.INSTANCE.AutoGPP3ShortShot,
-//                            PurpleProtonRobot.INSTANCE.IntakeRun,
-//                            new FollowPath(toPickup1GPP, true, .8),
-//                            new FollowPath(scoopGPP, true, 0.3),
-//                            new Delay(1),
-//                            new FollowPath(scoopGPP, true, 0.3),
-//                            new FollowPath(toPickup1GPP, true, .8),
-//                            PurpleProtonRobot.INSTANCE.IntakeStop,
-//                            new FollowPath(backToScoreGPP, true, .8),
-//                            PurpleProtonRobot.INSTANCE.Auto3ShortShot,
+                            PurpleProtonRobot.INSTANCE.IntakeRun,
+                            new FollowPath(toPickup1GPP, true, .8),
+                            new FollowPath(scoopGPP, true, 0.3),
+                            new Delay(1),
+                            new FollowPath(scoopGPP, true, 0.3),
+                            new FollowPath(toPickup1GPP, true, .8),
+                            PurpleProtonRobot.INSTANCE.IntakeStop,
+                            new FollowPath(backToScoreGPP, true, .8),
+                            PurpleProtonRobot.INSTANCE.Auto3ShortShot,
                         new FollowPath(leaveGPP, true, .8)
                 );
                 break;
