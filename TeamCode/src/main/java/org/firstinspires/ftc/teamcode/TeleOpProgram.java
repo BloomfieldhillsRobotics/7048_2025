@@ -30,6 +30,7 @@ import dev.nextftc.hardware.driving.DriverControlledCommand;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.Drawing;
 import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
 
 import java.util.List;
@@ -147,11 +148,13 @@ public class TeleOpProgram extends NextFTCOpMode {
             telemetry.addData("Limelight", "No data available");
         }
 
-        telemetry.addData("x", PedroComponent.follower().getPose().getX());
-        telemetry.addData("y", PedroComponent.follower().getPose().getY());
-        telemetry.addData("heading", PedroComponent.follower().getPose().getHeading());
-        telemetryM.debug("position", PedroComponent.follower().getPose());
+        Pose pose = PedroComponent.follower().getPose();
+        telemetry.addData("x", pose.getX());
+        telemetry.addData("y", pose.getY());
+        telemetry.addData("heading", pose.getHeading());
+        telemetryM.debug("position", pose.getPose());
         telemetryM.debug("velocity", PedroComponent.follower().getVelocity());
+        Drawing.drawOnlyCurrent(pose);
         telemetryM.update();
         telemetry.update();
 

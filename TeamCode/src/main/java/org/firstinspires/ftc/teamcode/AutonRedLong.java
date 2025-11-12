@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.AutonomousPaths;
 import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
+import org.firstinspires.ftc.teamcode.subsystems.Drawing;
 
 import java.util.List;
 
@@ -139,12 +140,21 @@ public class AutonRedLong extends NextFTCOpMode {
     // ==============================================================
     //  OpMode Lifecycle – ONLY THESE 5 METHODS
     // ==============================================================
+    public static void drawOnlyCurrent(Pose robotPose) {
+        try {
+            Drawing.drawRobot(robotPose);
+            Drawing.sendPacket();
+        } catch (Exception e) {
+            throw new RuntimeException("Drawing failed " + e);
+        }
+    }
 
     @Override
     public void onInit() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         PedroComponent.follower().setMaxPower(0.75);
         PedroComponent.follower().setStartingPose(startPose);
+        drawOnlyCurrent(PedroComponent.follower().getPose());
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         limelight.pipelineSwitch(APRILTAG_PIPELINE);
@@ -161,12 +171,14 @@ public class AutonRedLong extends NextFTCOpMode {
     public void onWaitForStart() {
         log("Status", "INIT_LOOP: Press START");
         telemetry.update();
+        drawOnlyCurrent(PedroComponent.follower().getPose());
     }
 
     @Override
     public void onStartButtonPressed() {
             opmodeTimer.resetTimer();
             detectAprilTag(); // This should run before building the command
+            drawOnlyCurrent(PedroComponent.follower().getPose());
             log("Status", "START: Running");
 
             // 1. Create a placeholder for the command we are about to build
@@ -238,6 +250,7 @@ public class AutonRedLong extends NextFTCOpMode {
             if (panelsTelemetry != null) panelsTelemetry.update();
 
             Pose pose = PedroComponent.follower().getPose();
+            drawOnlyCurrent(pose);
             double normH = Math.toDegrees((pose.getHeading() + 2 * Math.PI) % (2 * Math.PI));
 
             log("X",            String.format("%.2f", pose.getX()));

@@ -157,16 +157,28 @@ public class AutoBlueLong extends NextFTCOpMode {
     @Override
     public void onWaitForStart() {
         log("Status", "INIT_LOOP: Press START");
-        telemetry.update();
+        PedroComponent.follower().update();
+        Pose pose = PedroComponent.follower().getPose();
         Drawing.drawOnlyCurrent(PedroComponent.follower().getPose());
+        double normH = Math.toDegrees((pose.getHeading() + 2 * Math.PI) % (2 * Math.PI));
+        log("X",            String.format("%.2f", pose.getX()));
+        log("Y",            String.format("%.2f", pose.getY()));
+        log("Heading",      String.format("%.2f°", normH));
+        telemetry.update();
     }
 
     @Override
     public void onStartButtonPressed() {
         opmodeTimer.resetTimer();
+        PedroComponent.follower().update();
         detectAprilTag(); // This should run before building the command
+        Pose pose = PedroComponent.follower().getPose();
         Drawing.drawOnlyCurrent(PedroComponent.follower().getPose());
+        double normH = Math.toDegrees((pose.getHeading() + 2 * Math.PI) % (2 * Math.PI));
         log("Status", "START: Running");
+        log("X",            String.format("%.2f", pose.getX()));
+        log("Y",            String.format("%.2f", pose.getY()));
+        log("Heading",      String.format("%.2f°", normH));
 
         // 1. Create a placeholder for the command we are about to build
         Command autonomousCommand;
@@ -177,25 +189,56 @@ public class AutoBlueLong extends NextFTCOpMode {
                 autonomousCommand = new SequentialGroup(
                         new FollowPath(alignPPG, true, .8),
                         PurpleProtonRobot.INSTANCE.AutoPPG3LongShot,
-                        new FollowPath(leavePPG, true, .8)
+                        PurpleProtonRobot.INSTANCE.IntakeRun,
+                        new FollowPath(toPickup1PPG, true, .8),
+                        new FollowPath(scoopPPG, true, 0.3),
+                        new Delay(1),
+                        new FollowPath(scoopPPG, true, 0.3),
+                        new FollowPath(toPickup1PPG, true, .8),
+                        PurpleProtonRobot.INSTANCE.IntakeStop,
+                        new FollowPath(backToScorePPG, true, .8),
+                        PurpleProtonRobot.INSTANCE.Auto3LongShot,
+                        new FollowPath(leavePPG, true, .8),
+                        new FollowPath(alignPPG, true, .8)
                 );
                 break;
             case PGP_TAG_ID:
                 autonomousCommand = new SequentialGroup(
                         new FollowPath(alignPGP, true, .8),
                         PurpleProtonRobot.INSTANCE.AutoPGP3LongShot,
-                        new FollowPath(leavePGP, true, .8)
-                );
+                        PurpleProtonRobot.INSTANCE.IntakeRun,
+                        new FollowPath(toPickup1PGP, true, .8),
+                        new FollowPath(scoopPGP, true, 0.3),
+                        new Delay(1),
+                        new FollowPath(scoopPGP, true, 0.3),
+                        new FollowPath(toPickup1PGP, true, .8),
+                        PurpleProtonRobot.INSTANCE.IntakeStop,
+                        new FollowPath(backToScorePGP, true, .8),
+                        PurpleProtonRobot.INSTANCE.Auto3LongShot,
+                        new FollowPath(leavePGP, true, .8),
+                        new FollowPath(alignPGP, true, .8)
+                        );
                 break;
             case GPP_TAG_ID:
             default: // Default to GPP if something goes wrong
                 autonomousCommand = new SequentialGroup(
                         new FollowPath(alignGPP, true, .8),
                         PurpleProtonRobot.INSTANCE.AutoGPP3LongShot,
-                        new FollowPath(leaveGPP, true, .8)
+                        PurpleProtonRobot.INSTANCE.IntakeRun,
+                        new FollowPath(toPickup1GPP, true, .8),
+                        new FollowPath(scoopGPP, true, 0.3),
+                        new Delay(1),
+                        new FollowPath(scoopGPP, true, 0.3),
+                        new FollowPath(toPickup1GPP, true, .8),
+                        PurpleProtonRobot.INSTANCE.IntakeStop,
+                        new FollowPath(backToScoreGPP, true, .8),
+                        PurpleProtonRobot.INSTANCE.Auto3LongShot,
+                        new FollowPath(leaveGPP, true, .8),
+                        new FollowPath(alignGPP, true, .8)
                 );
                 break;
         }
+
 
         // 3. Schedule the one, big command to run. The scheduler handles the rest.
         autonomousCommand.schedule();
