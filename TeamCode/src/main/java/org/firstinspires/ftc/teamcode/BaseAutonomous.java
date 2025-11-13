@@ -52,13 +52,6 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
     // === Timers ===
     private final Timer opmodeTimer = new Timer();
 
-    // === AprilTag IDs ===
-    private static final int PPG_TAG_ID = 23;
-    private static final int PGP_TAG_ID = 22;
-    private static final int GPP_TAG_ID = 21;
-    private static final int APRILTAG_PIPELINE = 0;
-    private static final int DETECTION_TIMEOUT = 1000;
-
     // === Pathing ===
 
     private TelemetryManager panelsTelemetry;
@@ -113,13 +106,13 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
     // === AprilTag Detection (runs in start()) ===
     private void detectAprilTag() {
         int timeout = 0;
-        while (timeout < DETECTION_TIMEOUT && foundID == 0) {
+        while (timeout < VisionConstants.DETECTION_TIMEOUT && foundID == 0) {
             LLResult result = limelight.getLatestResult();
             if (result != null && result.isValid()) {
                 List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
                 if (fiducials != null && !fiducials.isEmpty()) {
                     int tagID = fiducials.get(0).getFiducialId();
-                    if (tagID == PPG_TAG_ID || tagID == PGP_TAG_ID || tagID == GPP_TAG_ID) {
+                    if (tagID == VisionConstants.PPG_TAG_ID || tagID == VisionConstants.PGP_TAG_ID || tagID == VisionConstants.GPP_TAG_ID) {
                         foundID = tagID;
                         log("Detected Tag", tagID);
                         return;
@@ -129,8 +122,8 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             new Delay(5);
             timeout++;
         }
-        if(foundID == 0 && timeout > DETECTION_TIMEOUT)
-            foundID = PGP_TAG_ID;
+        if(foundID == 0 && timeout > VisionConstants.DETECTION_TIMEOUT)
+            foundID = VisionConstants.PGP_TAG_ID;
         log("Warning", "No tag detected – using PGP");
     }
 
@@ -154,7 +147,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
         drawOnlyCurrent(PedroComponent.follower().getPose());
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(APRILTAG_PIPELINE);
+        limelight.pipelineSwitch(VisionConstants.APRILTAG_PIPELINE);
         limelight.start();
 
         opmodeTimer.resetTimer();
@@ -182,7 +175,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             PathChain finalAlignPath = null;
 
             switch (foundID) {
-                case PPG_TAG_ID:
+                case VisionConstants.PPG_TAG_ID:
                     autonomousCommand = new SequentialGroup(
                             new FollowPath(alignPPG, true, .8),
                             getPpgShot(),
@@ -198,7 +191,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                             new FollowPath(leavePPG, true, .8)
                     );
                     break;
-                case PGP_TAG_ID:
+                case VisionConstants.PGP_TAG_ID:
                     autonomousCommand = new SequentialGroup(
                             new FollowPath(alignPGP, true, .8),
                             getPgpShot(),
@@ -214,7 +207,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                             new FollowPath(leavePGP, true, .8)
                     );
                     break;
-                case GPP_TAG_ID:
+                case VisionConstants.GPP_TAG_ID:
                 default: // Default to GPP if something goes wrong
                     autonomousCommand = new SequentialGroup(
                             new FollowPath(alignGPP, true, .8),
