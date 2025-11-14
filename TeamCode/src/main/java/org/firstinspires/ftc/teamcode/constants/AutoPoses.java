@@ -51,3 +51,4 @@ public class AutoPoses {
         public static final Pose pickup2GPP = new Pose(19, 39, Math.toRadians(180));
     }
 }
+
