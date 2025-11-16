@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.bylazar.configurables.annotations.Configurable;
+
 import java.util.Set;
 
 import dev.nextftc.control.ControlSystem;
+import dev.nextftc.control.KineticState;
 import dev.nextftc.control.feedforward.FeedforwardElement;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -11,7 +14,7 @@ import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.powerable.SetPower;
-
+@Configurable
 public class FlyWheel implements Subsystem {
     public static final FlyWheel INSTANCE = new FlyWheel();
     private FlyWheel() { }
@@ -25,11 +28,14 @@ public class FlyWheel implements Subsystem {
     public static double kV = 0.0;
     public static double kA = 0.0;
     public static double kS = 0.0;
+    public static double kl = 0.0;
+
+    KineticState state = new KineticState(0, 0, 0);
 
 
     private ControlSystem controlSystem = ControlSystem.builder()
-            .velPid(kP, 0, kD)
-            .basicFF(kV, kA, kS)
+            .posPid(KineticState)
+            .basicFF(FlyWheelGroup.getVelocity(),0,0)
             .build();
 
     public Command superlongshot = new RunToVelocity(controlSystem, flywheelSpeed * 1.25).requires(this);
