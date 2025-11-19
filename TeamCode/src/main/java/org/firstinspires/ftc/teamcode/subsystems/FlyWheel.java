@@ -35,9 +35,8 @@ public class FlyWheel implements Subsystem {
             .basicFF(ff)
             .build();
 
-    public Command superlongshot = new RunToVelocity(controller, targetspeed*1.25).requires(this);
-    public Command longshot = new RunToVelocity(controller, targetspeed).requires(this);
-    public Command shortshot     = new RunToVelocity(controller, targetspeed * .8).requires(this);
+    public void setTargetSpeed(double speed) {
+        controller.setGoal(new KineticState(speed, 0));
     public final Command stop = new InstantCommand(() -> controller.setGoal(new KineticState(0,0))).requires(this);
 
     @Override
