@@ -1,62 +1,55 @@
 package org.firstinspires.ftc.teamcode.subsystems;
-
 import com.bylazar.configurables.annotations.Configurable;
-
-import java.util.Set;
-
 import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
-import dev.nextftc.control.feedforward.FeedforwardElement;
+import dev.nextftc.control.feedback.PIDCoefficients;
+import dev.nextftc.control.feedforward.BasicFeedforwardParameters;
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.powerable.SetPower;
+
 @Configurable
+
 public class FlyWheel implements Subsystem {
     public static final FlyWheel INSTANCE = new FlyWheel();
     private FlyWheel() { }
-
     MotorGroup FlyWheelGroup = new MotorGroup(
             new MotorEx("FlywheelRight"),
             new MotorEx("FlywheelLeft").reversed()
     );
 
-    public static double flywheelSpeed = 500.0;
+    public static double kP = 1.6667E-4, kI = 0, kD = 0, kV = 0.00038, kA = 0, kS = 0.0425;
 
-    // PID + optional FF gains (tunable from dashboard)
-    public static double kP = 0.0005;
-    public static double kI = 0.0;
-    public static double kD = 0.0;
+    public final PIDCoefficients pid = new PIDCoefficients(1.6667E-4,0,0);
+    public final BasicFeedforwardParameters ff =
+            new BasicFeedforwardParameters(0.00038, 0, 0.0425);
 
-    public static double kV = 0.0;
-    public static double kA = 0.0;
-    public static double kS = 0.0;
-
-    // FEEDBACK-ONLY: pure velocity PID
-    private ControlSystem controlSystem = ControlSystem.builder()
-            .velPid(kP, kI, kD)
+    private final ControlSystem controller = ControlSystem.builder()
+            .velPid(pid)
+            .basicFF(ff)
             .build();
 
-    public Command superlongshot = new RunToVelocity(controlSystem, flywheelSpeed * 1.25).requires(this);
-    public Command longshot      = new RunToVelocity(controlSystem, flywheelSpeed).requires(this);
-    public Command shortshot     = new RunToVelocity(controlSystem, flywheelSpeed * 0.8).requires(this);
-    public Command stop          = new SetPower(FlyWheelGroup, 0).requires(this);
+    public Command superlongshot = new RunToVelocity(controller, 750).requires(this);
+    public Command longshot = new RunToVelocity(controller, 500).requires(this);
+    public Command shortshot     = new RunToVelocity(controller, 350).requires(this);
+    public final Command stop = new InstantCommand(() -> controller.setGoal(new KineticState(0,0))).requires(this);
 
     @Override
     public void periodic() {
-        // closed-loop velocity control
-        FlyWheelGroup.setPower(controlSystem.calculate(FlyWheelGroup.getState()));
-
+        FlyWheelGroup.setPower(controller.calculate(FlyWheelGroup.getState()));
         ActiveOpMode.telemetry().addData("Flywheel State", FlyWheelGroup.getState());
-        ActiveOpMode.telemetry().addData("Flywheel Speed Target", flywheelSpeed);
-        ActiveOpMode.telemetry().addData("kP", kP);
+        ActiveOpMode.telemetry().addData("Flywheel Speed Target", controller.getGoal());
+        ActiveOpMode.telemetry().addData("FlyWheel Calculate", controller.calculate(FlyWheelGroup.getState()));
+        ActiveOpMode.telemetry().addData("kI", kI);
         ActiveOpMode.telemetry().addData("kI", kI);
         ActiveOpMode.telemetry().addData("kD", kD);
         ActiveOpMode.telemetry().addData("kV", kV);
         ActiveOpMode.telemetry().addData("kA", kA);
         ActiveOpMode.telemetry().addData("kS", kS);
+        ActiveOpMode.telemetry().addData("kP", kP);
     }
 }
