@@ -57,7 +57,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
     private static final int PGP_TAG_ID = 22;
     private static final int GPP_TAG_ID = 21;
     private static final int APRILTAG_PIPELINE = 0;
-    private static final int DETECTION_TIMEOUT = 1000;
+    private static final int DETECTION_TIMEOUT = 2000;
 
     // === Pathing ===
 
@@ -184,22 +184,22 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             switch (foundID) {
                 case PPG_TAG_ID:
                     autonomousCommand = new SequentialGroup(
-                            new FollowPath(alignPPG, true, .8),
-                            getPpgShot(),
+                            new FollowPath(alignPGP, true, .8),
+                            PurpleProtonRobot.INSTANCE.AutoPPG3LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeRun,
-                            new FollowPath(toPickup1PPG, true, .8),
-                            new FollowPath(scoopPPG, true, 0.3),
-                            new FollowPath(toPickup1PPG, true, .8),
+                            new FollowPath(toPickup1PGP, true, .8),
+                            new FollowPath(scoopPGP, true, 0.3),
+                            new FollowPath(toPickup1PGP, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
-                            new FollowPath(backToScorePPG, true, .8),
+                            new FollowPath(backToScorePGP, true, .8),
                             getFinalShot(),
-                            new FollowPath(leavePPG, true, .8)
+                            new FollowPath(leavePGP, true, .8)
                     );
                     break;
                 case PGP_TAG_ID:
                     autonomousCommand = new SequentialGroup(
                             new FollowPath(alignPGP, true, .8),
-                            getPgpShot(),
+                            PurpleProtonRobot.INSTANCE.AutoPPG3LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeRun,
                             new FollowPath(toPickup1PGP, true, .8),
                             new FollowPath(scoopPGP, true, 0.3),
@@ -213,16 +213,16 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                 case GPP_TAG_ID:
                 default: // Default to GPP if something goes wrong
                     autonomousCommand = new SequentialGroup(
-                            new FollowPath(alignGPP, true, .8),
-                            getGppShot(),
+                            new FollowPath(alignPGP, true, .8),
+                            PurpleProtonRobot.INSTANCE.AutoPPG3LongShot,
                             PurpleProtonRobot.INSTANCE.IntakeRun,
-                            new FollowPath(toPickup1GPP, true, .8),
-                            new FollowPath(scoopGPP, true, 0.3),
-                            new FollowPath(toPickup1GPP, true, .8),
+                            new FollowPath(toPickup1PGP, true, .8),
+                            new FollowPath(scoopPGP, true, 0.3),
+                            new FollowPath(toPickup1PGP, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
-                            new FollowPath(backToScoreGPP, true, .8),
+                            new FollowPath(backToScorePGP, true, .8),
                             getFinalShot(),
-                            new FollowPath(leaveGPP, true, .8)
+                            new FollowPath(leavePGP, true, .8)
                     );
                     break;
             }
