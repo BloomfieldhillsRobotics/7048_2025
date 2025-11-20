@@ -57,7 +57,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
     private static final int PGP_TAG_ID = 22;
     private static final int GPP_TAG_ID = 21;
     private static final int APRILTAG_PIPELINE = 0;
-    private static final int DETECTION_TIMEOUT = 2000;
+    private static final int DETECTION_TIMEOUT = 5000;
 
     // === Pathing ===
 
@@ -118,11 +118,13 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             if (result != null && result.isValid()) {
                 List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
                 if (fiducials != null && !fiducials.isEmpty()) {
-                    int tagID = fiducials.get(0).getFiducialId();
-                    if (tagID == PPG_TAG_ID || tagID == PGP_TAG_ID || tagID == GPP_TAG_ID) {
-                        foundID = tagID;
-                        log("Detected Tag", tagID);
-                        return;
+                    for (int i = 0; i < fiducials.size(); i++) {
+                        int tagID = fiducials.get(i).getFiducialId();
+                        if (tagID == PPG_TAG_ID || tagID == PGP_TAG_ID || tagID == GPP_TAG_ID) {
+                            foundID = tagID;
+                            log("Detected Tag", tagID);
+                            return;
+                        }
                     }
                 }
             }
@@ -184,26 +186,24 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             switch (foundID) {
                 case PPG_TAG_ID:
                     autonomousCommand = new SequentialGroup(
-                            new FollowPath(alignPGP, true, .8),
-                            PurpleProtonRobot.INSTANCE.AutoPPG3LongShot,
+                            new FollowPath(alignPPG, true, .8),
+                            getPpgShot(),
                             PurpleProtonRobot.INSTANCE.IntakeRun,
-                            new FollowPath(toPickup1PGP, true, .8),
-                            new FollowPath(scoopPGP, true, 0.3),
-                            new FollowPath(toPickup1PGP, true, .8),
+                            new FollowPath(toPickup1PPG, true, .8),
+                            new FollowPath(scoopPPG, true, 0.3),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
-                            new FollowPath(backToScorePGP, true, .8),
+                            new FollowPath(backToScorePPG, true, .8),
                             getFinalShot(),
-                            new FollowPath(leavePGP, true, .8)
+                            new FollowPath(leavePPG, true, .8)
                     );
                     break;
                 case PGP_TAG_ID:
                     autonomousCommand = new SequentialGroup(
                             new FollowPath(alignPGP, true, .8),
-                            PurpleProtonRobot.INSTANCE.AutoPPG3LongShot,
+                            getPgpShot(),
                             PurpleProtonRobot.INSTANCE.IntakeRun,
                             new FollowPath(toPickup1PGP, true, .8),
                             new FollowPath(scoopPGP, true, 0.3),
-                            new FollowPath(toPickup1PGP, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
                             new FollowPath(backToScorePGP, true, .8),
                             getFinalShot(),
@@ -213,16 +213,15 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                 case GPP_TAG_ID:
                 default: // Default to GPP if something goes wrong
                     autonomousCommand = new SequentialGroup(
-                            new FollowPath(alignPGP, true, .8),
-                            PurpleProtonRobot.INSTANCE.AutoPPG3LongShot,
+                            new FollowPath(alignGPP, true, .8),
+                            getGppShot(),
                             PurpleProtonRobot.INSTANCE.IntakeRun,
-                            new FollowPath(toPickup1PGP, true, .8),
-                            new FollowPath(scoopPGP, true, 0.3),
-                            new FollowPath(toPickup1PGP, true, .8),
+                            new FollowPath(toPickup1GPP, true, .8),
+                            new FollowPath(scoopGPP, true, 0.3),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
-                            new FollowPath(backToScorePGP, true, .8),
+                            new FollowPath(backToScoreGPP, true, .8),
                             getFinalShot(),
-                            new FollowPath(leavePGP, true, .8)
+                            new FollowPath(leaveGPP, true, .8)
                     );
                     break;
             }
