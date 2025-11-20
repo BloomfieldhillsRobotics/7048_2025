@@ -180,9 +180,9 @@ public class TeleOpProgram extends NextFTCOpMode {
         Gamepads.gamepad2().leftBumper()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.LongShot)
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
-        //Gamepads.gamepad2().x()
-         //       .whenBecomesTrue(PurpleProtonRobot.INSTANCE.superlongshot)
-         //       .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
+        Gamepads.gamepad2().x()
+                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.superlongshot)
+                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
         Gamepads.gamepad2().y()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.BasketDrop)
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.BasketUp);
