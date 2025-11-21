@@ -17,7 +17,6 @@ import dev.nextftc.hardware.powerable.SetPower;
 
 public class FlyWheel implements Subsystem {
     public static double targetspeed = 2400;
-    public static double kP = 0.0002, kI = 0, kD = 0, kV = 0.0004, kA = 0, kS = 0;
     public static double deadband = 5;
     public static double kP = 0.0002, kI = 0, kD = 0, kV = 0.0004, kA = 0, kS = 0;
     public static final FlyWheel INSTANCE = new FlyWheel();
