@@ -60,7 +60,19 @@ public class PurpleProtonRobot extends SubsystemGroup {
                     new Delay(.5),
                     FlyWheel.INSTANCE.stop
             ).named("ShortShot");
+    public final Command FireNote =
+            new SequentialGroup(
+                    new Delay(.5), // Give flywheel time to recover speed
+                    Elevator.INSTANCE.up,
+                    new Delay(.8),
+                    Elevator.INSTANCE.down
+            ).named("FireNote");
 
+    // We keep the FlyWheelStop command as a convenient shortcut
+    public final Command FlyWheelStop =
+            new SequentialGroup(
+                    FlyWheel.INSTANCE.stop
+            ).named("FlyWheelStop");
     public final Command LongShot =
             new SequentialGroup(
                     FlyWheel.INSTANCE.longshot,

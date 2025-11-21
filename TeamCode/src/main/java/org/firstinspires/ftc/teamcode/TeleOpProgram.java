@@ -39,9 +39,22 @@ import java.util.List;
 @TeleOp(name = "Los Protos")
 @Configurable //Panels
 public class TeleOpProgram extends NextFTCOpMode {
+    private double dynamicFlywheelSpeed = 0.0; // Variable to hold our calculated speed
     private TelemetryManager telemetryM;
     private Limelight3A limelight;
+    private double calculateSpeedFromVerticalOffset(double ty) {
+        // THIS IS A PLACEHOLDER FORMULA! TUNE THIS FOR YOUR ROBOT!
+        // For example, a simple linear mapping:
+        // Let's say at ty = -15 degrees (close), you need 1800 RPM.
+        // And at ty = 5 degrees (far), you need 3000 RPM.
+        // You can use a linear equation: y = mx + b
+        // m = (3000-1800) / (5 - (-15)) = 1200 / 20 = 60
+        // b = 1800 - (60 * -15) = 1800 + 900 = 2700
+        double speed = (60 * ty) + 2700;
 
+        // Clamp the speed to a safe range
+        return Math.max(1500, Math.min(3200, speed));
+    }
     public TeleOpProgram() {
         addComponents(
                 new SubsystemComponent(PurpleProtonRobot.INSTANCE),
@@ -95,6 +108,7 @@ public class TeleOpProgram extends NextFTCOpMode {
         telemetry.addData("Pipeline", "Index: %d, Type: %s",
                 status.getPipelineIndex(), status.getPipelineType());
 
+
         LLResult result = limelight.getLatestResult();
         if (result.isValid()) {
             // Access general information
@@ -102,6 +116,7 @@ public class TeleOpProgram extends NextFTCOpMode {
             double captureLatency = result.getCaptureLatency();
             double targetingLatency = result.getTargetingLatency();
             double parseLatency = result.getParseLatency();
+            dynamicFlywheelSpeed = calculateSpeedFromVerticalOffset(result.getTy());
             //telemetry.addData("LL Latency", captureLatency + targetingLatency);
            // telemetry.addData("Parse Latency", parseLatency);
             //telemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
@@ -146,6 +161,7 @@ public class TeleOpProgram extends NextFTCOpMode {
 
         } else {
             telemetry.addData("Limelight", "No data available");
+            telemetry.addData("Dynamic Flywheel Target", "%.2f", dynamicFlywheelSpeed);
         }
 
         Pose pose = PedroComponent.follower().getPose();
