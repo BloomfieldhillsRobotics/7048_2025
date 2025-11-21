@@ -1,4 +1,3 @@
-/*
 package org.firstinspires.ftc.teamcode.subsystems;
 import com.bylazar.configurables.annotations.Configurable;
 import dev.nextftc.control.ControlSystem;
@@ -40,13 +39,7 @@ public class FlyWheel implements Subsystem {
     public Command longshot = new RunToVelocity(controller, 2000, deadband).requires(this);
     public Command shortshot     = new RunToVelocity(controller, 1500, deadband).requires(this);
     public final Command stop = new InstantCommand(() -> controller.setGoal(new KineticState(0,0))).requires(this);
-    //public Command stop = new SetPower(FlyWheelGroup,0).requires(this);
 
-//    public Command superlongshot = new SetPower(FlyWheelGroup,1).requires(this);
-    //public Command superlongshot = new Set
- //   public Command longshot = new SetPower(FlyWheelGroup,.75).requires(this);
- //   public Command shortshot = new SetPower(FlyWheelGroup,.6).requires(this);
-//    public Command stop = new SetPower(FlyWheelGroup,0).requires(this);
     @Override
     public void periodic() {
         FlyWheelGroup.setPower(controller.calculate(FlyWheelGroup.getState()));
