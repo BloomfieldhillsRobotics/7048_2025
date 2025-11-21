@@ -16,16 +16,15 @@ import dev.nextftc.hardware.powerable.SetPower;
 @Configurable
 
 public class FlyWheel implements Subsystem {
-    public static double targetspeed = 2200;
-//    public static double kP = 0.00035, kI = 1E-7, kD = 0, kV = 1.667E-4, kA = 0, kS = 0.00425;
-    public static double kP = 1.775E-3, kI = 1.5E-17, kD = 0, kV = 0, kA = 0, kS = 0;
+    public static double targetspeed = 2400;
+    public static double deadband = 5;
+    public static double kP = 0.0002, kI = 0, kD = 0, kV = 0.0004, kA = 0, kS = 0;
     public static final FlyWheel INSTANCE = new FlyWheel();
     private FlyWheel() { }
     MotorGroup FlyWheelGroup = new MotorGroup(
-            new MotorEx("FlywheelRight"),
+            //new MotorEx("FlywheelRight")
             new MotorEx("FlywheelLeft").reversed()
     );
-
 
     public final PIDCoefficients pid = new PIDCoefficients(kP,kI,kD);
     public final BasicFeedforwardParameters ff =
@@ -36,19 +35,20 @@ public class FlyWheel implements Subsystem {
             .basicFF(ff)
             .build();
 
-//    public Command superlongshot = new RunToVelocity(controller, targetspeed*1.25).requires(this);
-//    public Command longshot = new RunToVelocity(controller, targetspeed).requires(this);
-//    public Command shortshot     = new RunToVelocity(controller, targetspeed * .8).requires(this);
-//    public final Command stop = new InstantCommand(() -> controller.setGoal(new KineticState(0,0))).requires(this);
+    public Command superlongshot = new RunToVelocity(controller, 2400, deadband).requires(this);
+    public Command longshot = new RunToVelocity(controller, 2000, deadband).requires(this);
+    public Command shortshot     = new RunToVelocity(controller, 1500, deadband).requires(this);
+    public final Command stop = new InstantCommand(() -> controller.setGoal(new KineticState(0,0))).requires(this);
+    //public Command stop = new SetPower(FlyWheelGroup,0).requires(this);
 
-    public Command superlongshot = new SetPower(FlyWheelGroup,1).requires(this);
+//    public Command superlongshot = new SetPower(FlyWheelGroup,1).requires(this);
     //public Command superlongshot = new Set
-    public Command longshot = new SetPower(FlyWheelGroup,.75).requires(this);
-    public Command shortshot = new SetPower(FlyWheelGroup,.6).requires(this);
-    public Command stop = new SetPower(FlyWheelGroup,0).requires(this);
+ //   public Command longshot = new SetPower(FlyWheelGroup,.75).requires(this);
+ //   public Command shortshot = new SetPower(FlyWheelGroup,.6).requires(this);
+//    public Command stop = new SetPower(FlyWheelGroup,0).requires(this);
     @Override
     public void periodic() {
-//        FlyWheelGroup.setPower(controller.calculate(FlyWheelGroup.getState()));
+        FlyWheelGroup.setPower(controller.calculate(FlyWheelGroup.getState()));
         ActiveOpMode.telemetry().addData("Flywheel State", FlyWheelGroup.getState());
         ActiveOpMode.telemetry().addData("Flywheel Speed Target", controller.getGoal());
         ActiveOpMode.telemetry().addData("FlyWheel Calculate", controller.calculate(FlyWheelGroup.getState()));

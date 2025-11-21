@@ -168,6 +168,8 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
 
     @Override
     public void onWaitForStart() {
+        log("Starting pose", getStartPose());
+        log("Current pose", PedroComponent.follower().getPose());
         log("Status", "INIT_LOOP: Press START");
         telemetry.update();
         drawOnlyCurrent(PedroComponent.follower().getPose());
