@@ -149,7 +149,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
     @Override
     public void onInit() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-        PedroComponent.follower().setMaxPower(0.75);
+        PedroComponent.follower().setMaxPower(0.8);
         PedroComponent.follower().setStartingPose(getStartPose());
         drawOnlyCurrent(PedroComponent.follower().getPose());
 
@@ -166,6 +166,8 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
 
     @Override
     public void onWaitForStart() {
+        log("Start pose",getStartPose());
+        log("current pose",PedroComponent.follower().getPose());
         log("Status", "INIT_LOOP: Press START");
         telemetry.update();
         drawOnlyCurrent(PedroComponent.follower().getPose());
@@ -176,6 +178,8 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             opmodeTimer.resetTimer();
             detectAprilTag(); // This should run before building the command
             drawOnlyCurrent(PedroComponent.follower().getPose());
+
+            log("Time (s)", String.format("%.2f")
             log("Status", "START: Running");
 
             Command autonomousCommand;

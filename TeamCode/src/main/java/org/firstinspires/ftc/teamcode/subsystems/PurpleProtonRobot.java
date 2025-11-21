@@ -187,7 +187,7 @@ public class PurpleProtonRobot extends SubsystemGroup {
                     LongShot,
                     IntakeSeq,
                     LongShot,
-                    BasketDrop,
+                    IntakeSeq,
                     LongShot
             ).named("Auto3LongShot");
     public final Command Auto3ShortShot =
@@ -196,7 +196,7 @@ public class PurpleProtonRobot extends SubsystemGroup {
                     LongShot,
                     IntakeSeq,
                     LongShot,
-                    BasketDrop,
+                    IntakeSeq,
                     LongShot
             ).named("Auto3LongShot");
 
