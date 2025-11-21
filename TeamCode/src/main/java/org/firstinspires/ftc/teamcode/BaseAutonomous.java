@@ -57,7 +57,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
     private static final int PGP_TAG_ID = 22;
     private static final int GPP_TAG_ID = 21;
     private static final int APRILTAG_PIPELINE = 0;
-    private static final int DETECTION_TIMEOUT = 1000;
+    private static final int DETECTION_TIMEOUT = 5000;
 
     // === Pathing ===
 
@@ -118,11 +118,13 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             if (result != null && result.isValid()) {
                 List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
                 if (fiducials != null && !fiducials.isEmpty()) {
-                    int tagID = fiducials.get(0).getFiducialId();
-                    if (tagID == PPG_TAG_ID || tagID == PGP_TAG_ID || tagID == GPP_TAG_ID) {
-                        foundID = tagID;
-                        log("Detected Tag", tagID);
-                        return;
+                    for (int i = 0; i < fiducials.size(); i++) {
+                        int tagID = fiducials.get(i).getFiducialId();
+                        if (tagID == PPG_TAG_ID || tagID == PGP_TAG_ID || tagID == GPP_TAG_ID) {
+                            foundID = tagID;
+                            log("Detected Tag", tagID);
+                            return;
+                        }
                     }
                 }
             }
@@ -189,7 +191,6 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                             PurpleProtonRobot.INSTANCE.IntakeRun,
                             new FollowPath(toPickup1PPG, true, .8),
                             new FollowPath(scoopPPG, true, 0.3),
-                            new FollowPath(toPickup1PPG, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
                             new FollowPath(backToScorePPG, true, .8),
                             getFinalShot(),
@@ -203,7 +204,6 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                             PurpleProtonRobot.INSTANCE.IntakeRun,
                             new FollowPath(toPickup1PGP, true, .8),
                             new FollowPath(scoopPGP, true, 0.3),
-                            new FollowPath(toPickup1PGP, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
                             new FollowPath(backToScorePGP, true, .8),
                             getFinalShot(),
@@ -218,7 +218,6 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                             PurpleProtonRobot.INSTANCE.IntakeRun,
                             new FollowPath(toPickup1GPP, true, .8),
                             new FollowPath(scoopGPP, true, 0.3),
-                            new FollowPath(toPickup1GPP, true, .8),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
                             new FollowPath(backToScoreGPP, true, .8),
                             getFinalShot(),
