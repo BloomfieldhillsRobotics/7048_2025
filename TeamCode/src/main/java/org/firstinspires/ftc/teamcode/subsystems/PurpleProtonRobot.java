@@ -84,11 +84,6 @@ public class PurpleProtonRobot extends SubsystemGroup {
                     FlyWheel.INSTANCE.stop
             ).named("LongShot");
 
-    public final Command FlyWheelStop =
-            new SequentialGroup(
-                    FlyWheel.INSTANCE.stop
-            ).named("FlyWheelStop");
-
     public final Command score =
             new SequentialGroup(
                     IntakeSeq,

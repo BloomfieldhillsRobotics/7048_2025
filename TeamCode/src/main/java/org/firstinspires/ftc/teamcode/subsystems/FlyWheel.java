@@ -34,7 +34,10 @@ public class FlyWheel implements Subsystem {
             .velPid(pid)
             .basicFF(ff)
             .build();
-
+    public void setTargetSpeed(double speed) {
+        controller.setGoal(new KineticState(speed, 0));
+    }
+//
     public Command superlongshot = new RunToVelocity(controller, 2400, deadband).requires(this);
     public Command longshot = new RunToVelocity(controller, 2000, deadband).requires(this);
     public Command shortshot     = new RunToVelocity(controller, 1500, deadband).requires(this);
