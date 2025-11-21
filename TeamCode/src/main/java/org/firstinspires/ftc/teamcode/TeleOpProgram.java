@@ -18,6 +18,7 @@ import dev.nextftc.bindings.BindingManager;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
@@ -29,8 +30,10 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.DriverControlledCommand;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Drawing;
+import org.firstinspires.ftc.teamcode.subsystems.FlyWheel;
 import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
 
 import java.util.List;
@@ -43,17 +46,26 @@ public class TeleOpProgram extends NextFTCOpMode {
     private TelemetryManager telemetryM;
     private Limelight3A limelight;
     private double calculateSpeedFromVerticalOffset(double ty) {
-        // THIS IS A PLACEHOLDER FORMULA! TUNE THIS FOR YOUR ROBOT!
-        // For example, a simple linear mapping:
-        // Let's say at ty = -15 degrees (close), you need 1800 RPM.
-        // And at ty = 5 degrees (far), you need 3000 RPM.
-        // You can use a linear equation: y = mx + b
-        // m = (3000-1800) / (5 - (-15)) = 1200 / 20 = 60
-        // b = 1800 - (60 * -15) = 1800 + 900 = 2700
-        double speed = (60 * ty) + 2700;
+        //refer to https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
+        double targetOffsetAngle_Vertical = 0;
+        double limelightMountAngleDegrees = 25.0;
+
+        // distance from the center of the Limelight lens to the floor
+        double limelightLensHeightInches = 20.0;
+
+        // distance from the target to the floor
+        double goalHeightInches = 60.0;
+
+        double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
+        double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
+        double maximumDistance = 3000;
+
+        //calculate distance
+        double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
+        double speed = 2700 * distanceFromLimelightToGoalInches / maximumDistance;
 
         // Clamp the speed to a safe range
-        return Math.max(1500, Math.min(3200, speed));
+        return Math.max(1500, Math.min(2800, speed));
     }
     public TeleOpProgram() {
         addComponents(
@@ -116,6 +128,7 @@ public class TeleOpProgram extends NextFTCOpMode {
             double captureLatency = result.getCaptureLatency();
             double targetingLatency = result.getTargetingLatency();
             double parseLatency = result.getParseLatency();
+
             dynamicFlywheelSpeed = calculateSpeedFromVerticalOffset(result.getTy());
             //telemetry.addData("LL Latency", captureLatency + targetingLatency);
            // telemetry.addData("Parse Latency", parseLatency);
@@ -191,14 +204,16 @@ public class TeleOpProgram extends NextFTCOpMode {
         Gamepads.gamepad2().dpadDown()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.elevatorDown);
         Gamepads.gamepad2().rightBumper()
-                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.ShortShot)
-                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
-        Gamepads.gamepad2().leftBumper()
-                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.LongShot)
-                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
-        Gamepads.gamepad2().x()
-                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.superlongshot)
-                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
+                .whenBecomesTrue(new InstantCommand(() -> {
+                    // When the button is pressed, get the latest calculated speed and set it.
+                    if (dynamicFlywheelSpeed > 0) { // Safety check
+                        FlyWheel.INSTANCE.setTargetSpeed(dynamicFlywheelSpeed);
+                    }
+                }))
+                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop); // Stop when released
+        //Gamepads.gamepad2().b()
+          //      .whenBecomesTrue(PurpleProtonRobot.INSTANCE.shortshot)
+            //    .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
         Gamepads.gamepad2().y()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.BasketDrop)
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.BasketUp);

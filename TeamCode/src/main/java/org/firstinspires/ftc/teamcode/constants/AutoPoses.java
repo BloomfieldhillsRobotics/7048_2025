@@ -31,12 +31,12 @@ public class AutoPoses {
         public static final Pose startPose = new Pose(88, 7, Math.toRadians(90));
         public static final Pose scoring1 = new Pose(90, 90, Math.toRadians(45));
         public static final Pose scoring2 = new Pose(96, 49, Math.toRadians(45));
-        public static final Pose pickup1PPG = new Pose(100, 83, Math.toRadians(0));
-        public static final Pose pickup2PPG = new Pose(124, 83, Math.toRadians(0));
-        public static final Pose pickup1PGP = new Pose(100, 59, Math.toRadians(0));
-        public static final Pose pickup2PGP = new Pose(124, 59, Math.toRadians(0));
-        public static final Pose pickup1GPP = new Pose(100, 39, Math.toRadians(0));
-        public static final Pose pickup2GPP = new Pose(124, 39, Math.toRadians(0));
+        public static final Pose pickup1PPG = new Pose(100, 84, Math.toRadians(0));
+        public static final Pose pickup2PPG = new Pose(124, 84, Math.toRadians(0));
+        public static final Pose pickup1PGP = new Pose(100, 60, Math.toRadians(0));
+        public static final Pose pickup2PGP = new Pose(124, 60, Math.toRadians(0));
+        public static final Pose pickup1GPP = new Pose(100, 38, Math.toRadians(0));
+        public static final Pose pickup2GPP = new Pose(124, 38, Math.toRadians(0));
     }
 
     public static class BlueLong {

@@ -11,16 +11,19 @@ import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.controllable.MotorGroup;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.powerable.SetPower;
 
 @Configurable
 
 public class FlyWheel implements Subsystem {
     public static double targetspeed = 2400;
     public static double kP = 0.0002, kI = 0, kD = 0, kV = 0.0004, kA = 0, kS = 0;
+    public static double deadband = 5;
+    public static double kP = 0.0002, kI = 0, kD = 0, kV = 0.0004, kA = 0, kS = 0;
     public static final FlyWheel INSTANCE = new FlyWheel();
     private FlyWheel() { }
     MotorGroup FlyWheelGroup = new MotorGroup(
-            new MotorEx("FlywheelRight"),
+            //new MotorEx("FlywheelRight")
             new MotorEx("FlywheelLeft").reversed()
     );
 
@@ -32,14 +35,13 @@ public class FlyWheel implements Subsystem {
             .velPid(pid)
             .basicFF(ff)
             .build();
-
     public void setTargetSpeed(double speed) {
         controller.setGoal(new KineticState(speed, 0));
     }
-    public Command superlongshot = new RunToVelocity(controller, 2400).requires(this);
-    public Command longshot = new RunToVelocity(controller, 1800).requires(this);
-    public Command shortshot = new RunToVelocity(controller, 1500).requires(this);
-
+//
+    public Command superlongshot = new RunToVelocity(controller, 2400, deadband).requires(this);
+    public Command longshot = new RunToVelocity(controller, 2000, deadband).requires(this);
+    public Command shortshot     = new RunToVelocity(controller, 1500, deadband).requires(this);
     public final Command stop = new InstantCommand(() -> controller.setGoal(new KineticState(0,0))).requires(this);
 
     @Override

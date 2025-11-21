@@ -1,6 +1,7 @@
 
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -39,7 +40,7 @@ public class AutonomousPaths {
                 .build();
 
         paths.backToScorePPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup2PPG, scoring1))
+                .addPath(new BezierCurve(pickup2PPG, scoring1))
                 .setLinearHeadingInterpolation(pickup2PPG.getHeading(), scoring1.getHeading())
                 .build();
 
@@ -64,7 +65,7 @@ public class AutonomousPaths {
                 .build();
 
         paths.backToScorePGP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup2PGP, scoring1))
+                .addPath(new BezierCurve(pickup2PGP, scoring1))
                 .setLinearHeadingInterpolation(pickup2PGP.getHeading(), scoring1.getHeading())
                 .build();
 
@@ -89,7 +90,7 @@ public class AutonomousPaths {
                 .build();
 
         paths.backToScoreGPP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierLine(pickup2GPP, scoring1))
+                .addPath(new BezierCurve(pickup2GPP, scoring1))
                 .setLinearHeadingInterpolation(pickup2GPP.getHeading(), scoring1.getHeading())
                 .build();
 
