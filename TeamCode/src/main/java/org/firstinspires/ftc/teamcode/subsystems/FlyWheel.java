@@ -5,6 +5,8 @@ import dev.nextftc.control.KineticState;
 import dev.nextftc.control.feedback.PIDCoefficients;
 import dev.nextftc.control.feedforward.BasicFeedforwardParameters;
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
@@ -23,14 +25,14 @@ public class FlyWheel implements Subsystem {
     private FlyWheel() { }
 
     private MotorEx FlyWheelRight = new MotorEx("FlywheelRight");
-    private MotorEx FlyWheelLeft = new MotorEx("FlywheelLeft").reversed();
+    private MotorEx FlyWheelLeft = new MotorEx("FlywheelLeft");
 
-    MotorGroup FlyWheelGroup = new MotorGroup(
+   //MotorGroup FlyWheelGroup = new MotorGroup(
             //new MotorEx("FlywheelRight"),
             //new MotorEx("FlywheelLeft").reversed()
-            FlyWheelRight,
-            FlyWheelLeft
-    );
+    //        FlyWheelRight,
+    //      FlyWheelLeft.reversed()
+    //);
 
     public final PIDCoefficients pid = new PIDCoefficients(kP,kI,kD);
     public final BasicFeedforwardParameters ff =
@@ -40,29 +42,66 @@ public class FlyWheel implements Subsystem {
             .velPid(pid)
             .basicFF(ff)
             .build();
+
+    private final ControlSystem controllerright = ControlSystem.builder()
+            .velPid(pid)
+            .basicFF(ff)
+            .build();
+
+    private final ControlSystem controllerleft = ControlSystem.builder()
+            .velPid(pid)
+            .basicFF(ff)
+            .build();
+
     public void setTargetSpeed(double speed) {
         targetspeed = speed;
         // This is the correct way to set the target. The periodic() method
         // will handle the rest.
         // The previous way was passing deadband as an acceleration, not a deadband
-        new RunToVelocity(controller, targetspeed, deadband).requires(this);
+        //new RunToVelocity(controller, targetspeed, deadband).requires(this);
+        controllerright.setGoal(new KineticState(0,targetspeed,0));
+        controllerleft.setGoal(new KineticState(0,-targetspeed,0));
     }
 
-    public Command superlongshot = new RunToVelocity(controller, targetspeed, deadband).requires(this);
-    public Command longshot = new RunToVelocity(controller, 2000, deadband).requires(this);
-    public Command shortshot     = new RunToVelocity(controller, 1500, deadband).requires(this);
-    public final Command stop = new InstantCommand(() -> controller.setGoal(new KineticState(0,0))).requires(this);
+    //new RunToVelocity(controller, targetspeed, deadband).requires(this);
+    //public Command superlongshot = new SequentialGroup(
+    //        new RunToVelocity(controllerright, 2300, deadband).requires(this),
+     //       new RunToVelocity(controllerleft, -2300, deadband).requires(this)
+    //);
+    public Command superlongshot = new InstantCommand(() -> {
+        setTargetSpeed(2300);
+    });
+    public Command longshot = new InstantCommand(() -> {
+        setTargetSpeed(1800);
+    });
+    public Command shortshot = new InstantCommand(() -> {
+        setTargetSpeed(1200);
+    });
+    public Command backwards = new InstantCommand(() -> {
+        setTargetSpeed(-300);
+    });
+    public Command stop = new InstantCommand(() -> {
+        setTargetSpeed(0);
+    });
+    //public Command shortshot     = new RunToVelocity(controller, 1500, deadband).requires(this);
+    //public Command stop = new SequentialGroup(
+      //      new InstantCommand(() -> controllerright.setGoal(new KineticState(0,0))).requires(this),
+        //    new InstantCommand(() -> controllerleft.setGoal(new KineticState(0,0))).requires(this)
+    //);
+    //public final Command stop = new InstantCommand(() -> controller.setGoal(new KineticState(0,0))).requires(this);
 
     @Override
     public void periodic() {
-        FlyWheelLeft.setPower(controller.calculate(FlyWheelLeft.getState()));
-        FlyWheelRight.setPower(controller.calculate(FlyWheelRight.getState()));
+        FlyWheelLeft.setPower(controllerleft.calculate(FlyWheelLeft.getState()));
+        FlyWheelRight.setPower(controllerright.calculate(FlyWheelRight.getState()));
         ActiveOpMode.telemetry().addData("Targetspeed", targetspeed);
-        ActiveOpMode.telemetry().addData("Flywheel State", FlyWheelGroup.getState());
-        ActiveOpMode.telemetry().addData("Flywheel Speed Target", controller.getGoal());
-        ActiveOpMode.telemetry().addData("FlyWheel Calculate", controller.calculate(FlyWheelGroup.getState()));
+       // ActiveOpMode.telemetry().addData("Flywheel State", FlyWheelGroup.getState());
+        //ActiveOpMode.telemetry().addData("Flywheel Speed Target", controller.getGoal());
+       // ActiveOpMode.telemetry().addData("FlyWheel Calculate", controller.calculate(FlyWheelGroup.getState()));
         ActiveOpMode.telemetry().addData("Flywheel Right velocity", FlyWheelRight.getVelocity());
         ActiveOpMode.telemetry().addData("Flywheel Left velocity", FlyWheelLeft.getVelocity());
+        ActiveOpMode.telemetry().addData("Flywheel Right calculate", controllerright.calculate(FlyWheelRight.getState()));
+        ActiveOpMode.telemetry().addData("Flywheel Left velocity", controllerleft.calculate(FlyWheelLeft.getState()));
         ActiveOpMode.telemetry().addData("kI", kI);
         ActiveOpMode.telemetry().addData("kI", kI);
         ActiveOpMode.telemetry().addData("kD", kD);

@@ -195,8 +195,12 @@ public class TeleOpProgram extends NextFTCOpMode {
     }
     public void onStartButtonPressed() {
         PedroComponent.follower().startTeleopDrive();
-        // Gamepads.gamepad1().a()
-        //          .whenBecomesTrue(getGPP());
+        Gamepads.gamepad1().y()
+                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.LifterRun)
+                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.LifterStop);
+        Gamepads.gamepad1().a()
+                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.LifterRunBackwards)
+                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.LifterStop);
         Gamepads.gamepad2().b()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.IntakeRun)
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.IntakeStop);

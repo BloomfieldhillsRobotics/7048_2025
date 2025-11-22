@@ -5,6 +5,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.SubsystemGroup;
 
 public class PurpleProtonRobot extends SubsystemGroup {
@@ -15,7 +16,8 @@ public class PurpleProtonRobot extends SubsystemGroup {
                 Intake.INSTANCE,
                 FlyWheel.INSTANCE,
                 Elevator.INSTANCE,
-                Basket.INSTANCE
+                Basket.INSTANCE,
+                Lifter.INSTANCE
         );
     }
     public final Command IntakeStop =
@@ -33,6 +35,18 @@ public class PurpleProtonRobot extends SubsystemGroup {
                     new Delay(.22),
                     Intake.INSTANCE.stop
             ).named("IntakeSeq");
+    public final Command LifterStop =
+            new SequentialGroup(
+                    Lifter.INSTANCE.stop
+            ).named("LifterStop");
+    public final Command LifterRun =
+            new SequentialGroup(
+                    Lifter.INSTANCE.run
+            ).named("LifterRun");
+    public final Command LifterRunBackwards =
+            new SequentialGroup(
+                    Lifter.INSTANCE.runBackwards
+            ).named("LifterRunBackwards");
     public final Command Shoot =
             new SequentialGroup(
                     Elevator.INSTANCE.down,
@@ -101,7 +115,8 @@ public class PurpleProtonRobot extends SubsystemGroup {
             ).named("ElevatorDown");
     public final Command superlongshot =
             new SequentialGroup(
-                    FlyWheel.INSTANCE.superlongshot
+                    //FlyWheel.INSTANCE.superlongshot
+                   FlyWheel.INSTANCE.superlongshot
             ).named("Superlongshot");
     public final Command longshot =
             new SequentialGroup(
@@ -119,12 +134,15 @@ public class PurpleProtonRobot extends SubsystemGroup {
             new SequentialGroup(
                     Elevator.INSTANCE.down,
                     Basket.INSTANCE.down,
+                    FlyWheel.INSTANCE.backwards,
                     new Delay(.5),
-                    Basket.INSTANCE.up
+                    Basket.INSTANCE.up,
+                    FlyWheel.INSTANCE.stop
             ).named("BasketDrop");
     public final Command BasketUp =
             new SequentialGroup(
-                    Basket.INSTANCE.up
+                    Basket.INSTANCE.up,
+                    FlyWheel.INSTANCE.stop
             ).named("BasketUp");
     public final Command AutoPPG3LongShot =
             new SequentialGroup(
