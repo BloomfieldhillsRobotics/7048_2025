@@ -11,9 +11,9 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 public class AutonomousPaths {
 
     public static class PathContainer {
-        public PathChain alignPPG, toPickup1PPG, scoopPPG, backToScorePPG, leavePPG;
-        public PathChain alignPGP, toPickup1PGP, scoopPGP, backToScorePGP, leavePGP;
-        public PathChain alignGPP, toPickup1GPP, scoopGPP, backToScoreGPP, leaveGPP;
+        public PathChain alignPPG, toPickup1PPG, scoopPPG, reversescoopPPG, backToScorePPG, leavePPG;
+        public PathChain alignPGP, toPickup1PGP, scoopPGP, reversescoopPGP, backToScorePGP, leavePGP;
+        public PathChain alignGPP, toPickup1GPP, scoopGPP, reversescoopGPP, backToScoreGPP, leaveGPP;
     }
 
     public static PathContainer buildPaths(
@@ -39,9 +39,14 @@ public class AutonomousPaths {
                 .setLinearHeadingInterpolation(pickup1PPG.getHeading(), pickup2PPG.getHeading())
                 .build();
 
+        paths.reversescoopPPG = PedroComponent.follower().pathBuilder()
+                .addPath(new BezierLine(pickup2PPG, pickup1PPG))
+                .setLinearHeadingInterpolation(pickup2PPG.getHeading(), pickup1PPG.getHeading())
+                .build();
+
         paths.backToScorePPG = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierCurve(pickup2PPG, scoring1))
-                .setLinearHeadingInterpolation(pickup2PPG.getHeading(), scoring1.getHeading())
+                .addPath(new BezierCurve(pickup1PPG, scoring1))
+                .setLinearHeadingInterpolation(pickup1PPG.getHeading(), scoring1.getHeading())
                 .build();
 
         paths.leavePPG = PedroComponent.follower().pathBuilder()
@@ -64,9 +69,14 @@ public class AutonomousPaths {
                 .setLinearHeadingInterpolation(pickup1PGP.getHeading(), pickup2PGP.getHeading())
                 .build();
 
+        paths.reversescoopPGP = PedroComponent.follower().pathBuilder()
+                .addPath(new BezierLine(pickup2PGP, pickup1PGP))
+                .setLinearHeadingInterpolation(pickup2PGP.getHeading(), pickup1PGP.getHeading())
+                .build();
+
         paths.backToScorePGP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierCurve(pickup2PGP, scoring1))
-                .setLinearHeadingInterpolation(pickup2PGP.getHeading(), scoring1.getHeading())
+                .addPath(new BezierCurve(pickup1PGP, scoring1))
+                .setLinearHeadingInterpolation(pickup1PGP.getHeading(), scoring1.getHeading())
                 .build();
 
         paths.leavePGP = PedroComponent.follower().pathBuilder()
@@ -89,9 +99,14 @@ public class AutonomousPaths {
                 .setLinearHeadingInterpolation(pickup1GPP.getHeading(), pickup2GPP.getHeading())
                 .build();
 
+        paths.reversescoopGPP = PedroComponent.follower().pathBuilder()
+                .addPath(new BezierLine(pickup2GPP, pickup1GPP))
+                .setLinearHeadingInterpolation(pickup2GPP.getHeading(), pickup1GPP.getHeading())
+                .build();
+
         paths.backToScoreGPP = PedroComponent.follower().pathBuilder()
-                .addPath(new BezierCurve(pickup2GPP, scoring1))
-                .setLinearHeadingInterpolation(pickup2GPP.getHeading(), scoring1.getHeading())
+                .addPath(new BezierCurve(pickup1GPP, scoring1))
+                .setLinearHeadingInterpolation(pickup1GPP.getHeading(), scoring1.getHeading())
                 .build();
 
         paths.leaveGPP = PedroComponent.follower().pathBuilder()

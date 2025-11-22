@@ -68,9 +68,9 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
     private Limelight3A limelight;
 
     // === Path Chains ===
-    private PathChain alignPPG, toPickup1PPG, scoopPPG, backToScorePPG, leavePPG;
-    private PathChain alignPGP, toPickup1PGP, scoopPGP, backToScorePGP, leavePGP;
-    private PathChain alignGPP, toPickup1GPP, scoopGPP, backToScoreGPP, leaveGPP;
+    private PathChain alignPPG, toPickup1PPG, scoopPPG, reversescoopPPG, backToScorePPG, leavePPG;
+    private PathChain alignPGP, toPickup1PGP, scoopPGP, reversescoopPGP, backToScorePGP, leavePGP;
+    private PathChain alignGPP, toPickup1GPP, scoopGPP, reversescoopGPP, backToScoreGPP, leaveGPP;
 
     // === Timer Class ===
     public static class Timer {
@@ -96,16 +96,19 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
         alignPPG = paths.alignPPG;
         toPickup1PPG = paths.toPickup1PPG;
         scoopPPG = paths.scoopPPG;
+        reversescoopPPG = paths.reversescoopPPG;
         backToScorePPG = paths.backToScorePPG;
         leavePPG = paths.leavePPG;
         alignPGP = paths.alignPGP;
         toPickup1PGP = paths.toPickup1PGP;
         scoopPGP = paths.scoopPGP;
+        reversescoopPGP = paths.reversescoopPGP;
         backToScorePGP = paths.backToScorePGP;
         leavePGP = paths.leavePGP;
         alignGPP = paths.alignGPP;
         toPickup1GPP = paths.toPickup1GPP;
         scoopGPP = paths.scoopGPP;
+        reversescoopGPP = paths.reversescoopGPP;
         backToScoreGPP = paths.backToScoreGPP;
         leaveGPP = paths.leaveGPP;
     }
@@ -196,6 +199,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                             new FollowPath(toPickup1PPG, true, .8),
                             new FollowPath(scoopPPG, true, 0.3),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
+                            new FollowPath(reversescoopPPG, true, 0.3),
                             new FollowPath(backToScorePPG, true, .8),
                             getFinalShot(),
                             new FollowPath(leavePPG, true, .8)
@@ -209,6 +213,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                             new FollowPath(toPickup1PGP, true, .8),
                             new FollowPath(scoopPGP, true, 0.3),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
+                            new FollowPath(reversescoopPGP, true, 0.3),
                             new FollowPath(backToScorePGP, true, .8),
                             getFinalShot(),
                             new FollowPath(leavePGP, true, .8)
@@ -223,6 +228,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                             new FollowPath(toPickup1GPP, true, .8),
                             new FollowPath(scoopGPP, true, 0.3),
                             PurpleProtonRobot.INSTANCE.IntakeStop,
+                            new FollowPath(reversescoopGPP, true, 0.3),
                             new FollowPath(backToScoreGPP, true, .8),
                             getFinalShot(),
                             new FollowPath(leaveGPP, true, .8)
