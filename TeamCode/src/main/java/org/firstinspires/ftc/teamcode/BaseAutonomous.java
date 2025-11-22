@@ -181,7 +181,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             detectAprilTag(); // This should run before building the command
             drawOnlyCurrent(PedroComponent.follower().getPose());
 
-            log("Time (s)", String.format("%.2f")
+            log("Time (s)", String.format("%.2f"));
             log("Status", "START: Running");
 
             Command autonomousCommand;
