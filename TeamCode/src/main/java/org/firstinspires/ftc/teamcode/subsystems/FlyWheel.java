@@ -44,7 +44,8 @@ public class FlyWheel implements Subsystem {
         targetspeed = speed;
         // This is the correct way to set the target. The periodic() method
         // will handle the rest.
-        controller.setGoal(new KineticState(0, targetspeed, deadband));
+        // The previous way was passing deadband as an acceleration, not a deadband
+        new RunToVelocity(controller, targetspeed, deadband).requires(this);
     }
 
     public Command superlongshot = new RunToVelocity(controller, targetspeed, deadband).requires(this);
@@ -54,7 +55,8 @@ public class FlyWheel implements Subsystem {
 
     @Override
     public void periodic() {
-        FlyWheelGroup.setPower(controller.calculate(FlyWheelGroup.getState()));
+        FlyWheelLeft.setPower(controller.calculate(FlyWheelLeft.getState()));
+        FlyWheelRight.setPower(controller.calculate(FlyWheelRight.getState()));
         ActiveOpMode.telemetry().addData("Targetspeed", targetspeed);
         ActiveOpMode.telemetry().addData("Flywheel State", FlyWheelGroup.getState());
         ActiveOpMode.telemetry().addData("Flywheel Speed Target", controller.getGoal());
