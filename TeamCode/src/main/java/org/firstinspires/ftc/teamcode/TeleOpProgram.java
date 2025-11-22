@@ -45,16 +45,17 @@ public class TeleOpProgram extends NextFTCOpMode {
     private double dynamicFlywheelSpeed = 0.0; // Variable to hold our calculated speed
     private TelemetryManager telemetryM;
     private Limelight3A limelight;
+    private double targetvel = 1500;
     private double calculateSpeedFromVerticalOffset(double ty) {
         //refer to https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
-        double targetOffsetAngle_Vertical = 0;
-        double limelightMountAngleDegrees = 25.0;
+        double targetOffsetAngle_Vertical = ty;
+        double limelightMountAngleDegrees = 0;
 
         // distance from the center of the Limelight lens to the floor
-        double limelightLensHeightInches = 20.0;
+        double limelightLensHeightInches = 11.8;
 
         // distance from the target to the floor
-        double goalHeightInches = 60.0;
+        double goalHeightInches = 29.5;
 
         double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
         double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
@@ -62,10 +63,13 @@ public class TeleOpProgram extends NextFTCOpMode {
 
         //calculate distance
         double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
-        double speed = 2700 * distanceFromLimelightToGoalInches / maximumDistance;
+        double speed = 2400 * distanceFromLimelightToGoalInches / maximumDistance;
 
         // Clamp the speed to a safe range
-        return Math.max(1500, Math.min(2800, speed));
+       // return Math.max(1500, Math.min(2400, speed));
+        return distanceFromLimelightToGoalInches;
+
+
     }
     public TeleOpProgram() {
         addComponents(
@@ -134,6 +138,7 @@ public class TeleOpProgram extends NextFTCOpMode {
            // telemetry.addData("Parse Latency", parseLatency);
             //telemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
 
+            telemetry.addData("distance to april tag", dynamicFlywheelSpeed);
             telemetry.addData("tx", result.getTx());
             telemetry.addData("txnc", result.getTxNC());
             telemetry.addData("ty", result.getTy());
@@ -190,14 +195,14 @@ public class TeleOpProgram extends NextFTCOpMode {
     }
     public void onStartButtonPressed() {
         PedroComponent.follower().startTeleopDrive();
-       // Gamepads.gamepad1().a()
-      //          .whenBecomesTrue(getGPP());
+        // Gamepads.gamepad1().a()
+        //          .whenBecomesTrue(getGPP());
         Gamepads.gamepad2().b()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.IntakeRun)
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.IntakeStop);
         //Gamepads.gamepad2().a()
         //        .whenBecomesTrue(PurpleProtonRobot.INSTANCE.runIntakeBackwards)
-         //       .whenBecomesFalse(PurpleProtonRobot.INSTANCE.intakeStop);
+        //       .whenBecomesFalse(PurpleProtonRobot.INSTANCE.intakeStop);
         Gamepads.gamepad2().dpadUp()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.elevatorUp)
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.elevatorDown);
@@ -206,16 +211,27 @@ public class TeleOpProgram extends NextFTCOpMode {
         Gamepads.gamepad2().rightBumper()
                 .whenBecomesTrue(new InstantCommand(() -> {
                     // When the button is pressed, get the latest calculated speed and set it.
-                    if (dynamicFlywheelSpeed > 0) { // Safety check
-                        FlyWheel.INSTANCE.setTargetSpeed(dynamicFlywheelSpeed);
-                    }
+                    //if (dynamicFlywheelSpeed > 0) { // Safety check
+                        FlyWheel.INSTANCE.setTargetSpeed(targetvel);
+                    //}
                 }))
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop); // Stop when released
         //Gamepads.gamepad2().b()
-          //      .whenBecomesTrue(PurpleProtonRobot.INSTANCE.shortshot)
-            //    .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
+        //      .whenBecomesTrue(PurpleProtonRobot.INSTANCE.shortshot)
+        //    .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
         Gamepads.gamepad2().y()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.BasketDrop)
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.BasketUp);
+        Gamepads.gamepad2().dpadLeft()
+                .whenBecomesTrue(new InstantCommand(() -> {
+                            FlyWheel.INSTANCE.setTargetSpeed(targetvel = targetvel + 100);
+                        }));
+        Gamepads.gamepad2().dpadRight()
+                .whenBecomesTrue(new InstantCommand(() -> {
+                    FlyWheel.INSTANCE.setTargetSpeed(targetvel = targetvel - 100);
+                }));
+        Gamepads.gamepad2().x()
+                .whenBecomesTrue(FlyWheel.INSTANCE.superlongshot)
+        .whenBecomesFalse(FlyWheel.INSTANCE.stop);
     }
 }
