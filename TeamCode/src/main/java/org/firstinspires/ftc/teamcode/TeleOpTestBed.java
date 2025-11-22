@@ -14,12 +14,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.Drawing;
+import org.firstinspires.ftc.teamcode.subsystems.FlyWheel;
 import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
 import org.firstinspires.ftc.teamcode.subsystems.TestBed;
 
 import java.util.List;
 
 import dev.nextftc.bindings.BindingManager;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.PedroComponent;
@@ -33,6 +35,7 @@ import dev.nextftc.hardware.driving.DriverControlledCommand;
 @TeleOp(name = "TestBed")
 @Configurable //Panels
 public class TeleOpTestBed extends NextFTCOpMode {
+    private double targetvel = 1500;
 
     public TeleOpTestBed() {
         addComponents(
@@ -66,5 +69,11 @@ public class TeleOpTestBed extends NextFTCOpMode {
         Gamepads.gamepad2().x()
                 .whenBecomesTrue(TestBed.INSTANCE.FlyWheelShortShot)
                 .whenBecomesFalse(TestBed.INSTANCE.FlyWheelStop);
+        Gamepads.gamepad2().y()
+                .whenBecomesTrue(new InstantCommand(() -> {
+                    FlyWheel.INSTANCE.setTargetSpeed(1250);
+                }))
+                .whenBecomesFalse(TestBed.INSTANCE.FlyWheelStop);
+        ;
     }
 }
