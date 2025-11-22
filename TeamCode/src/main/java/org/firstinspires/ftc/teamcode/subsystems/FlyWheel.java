@@ -22,8 +22,8 @@ public class FlyWheel implements Subsystem {
     public static final FlyWheel INSTANCE = new FlyWheel();
     private FlyWheel() { }
     MotorGroup FlyWheelGroup = new MotorGroup(
-            new MotorEx("FlywheelRight")
-            //new MotorEx("FlywheelLeft").reversed()
+            new MotorEx("FlywheelRight"),
+            new MotorEx("FlywheelLeft").reversed()
     );
 
     public final PIDCoefficients pid = new PIDCoefficients(kP,kI,kD);
@@ -35,10 +35,10 @@ public class FlyWheel implements Subsystem {
             .basicFF(ff)
             .build();
     public void setTargetSpeed(double speed) {
-        targetspeed=speed;
-        //controller.setGoal(new KineticState(speed, 0));
-        //new InstantCommand(() -> controller.setGoal(new KineticState(0,targetspeed))).requires(this);
-        new RunToVelocity(controller, targetspeed, deadband).requires(this);
+        targetspeed = speed;
+        // This is the correct way to set the target. The periodic() method
+        // will handle the rest.
+        controller.setGoal(new KineticState(0, targetspeed, deadband));
     }
 //
     public Command superlongshot = new RunToVelocity(controller, targetspeed, deadband).requires(this);
