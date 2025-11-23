@@ -47,6 +47,7 @@ public class TeleOpProgram extends NextFTCOpMode {
     private Limelight3A limelight;
     private double targetvel = 1400;
     private double headingCorrection = 0;
+    private double distanceFromLimelightToGoalInches = 0;
 
     private double calculateSpeedFromVerticalOffset(double ty) {
         //refer to https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
@@ -64,7 +65,7 @@ public class TeleOpProgram extends NextFTCOpMode {
         double maximumDistance = 3000;
 
         //calculate distance
-        double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
+        distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
         double targetFlywheelSpeed = 1160 + 7.5 * distanceFromLimelightToGoalInches;
 
         // Clamp the speed to a safe range
@@ -135,7 +136,7 @@ public class TeleOpProgram extends NextFTCOpMode {
            // telemetry.addData("Parse Latency", parseLatency);
             //telemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
 
-            telemetry.addData("distance to april tag", dynamicFlywheelSpeed);
+            telemetry.addData("distance to april tag", distanceFromLimelightToGoalInches);
             telemetry.addData("tx", result.getTx());
             telemetry.addData("txnc", result.getTxNC());
             telemetry.addData("ty", result.getTy());

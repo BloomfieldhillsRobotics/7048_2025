@@ -72,10 +72,10 @@ public class FlyWheel implements Subsystem {
         setTargetSpeed(2300);
     });
     public Command longshot = new InstantCommand(() -> {
-        setTargetSpeed(1800);
+        setTargetSpeed(1600);
     });
     public Command shortshot = new InstantCommand(() -> {
-        setTargetSpeed(1200);
+        setTargetSpeed(1400);
     });
     public Command backwards = new InstantCommand(() -> {
         setTargetSpeed(-300);
