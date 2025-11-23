@@ -187,7 +187,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             PedroComponent.follower().setStartingPose(getStartPose()); // Try setting starting pose again as backup after init.
             drawOnlyCurrent(PedroComponent.follower().getPose());
 
-            log("Time (s)", String.format("%.2f"));
+            //log("Time (s)", String.format("%.2f"));
             log("Status", "START: Running");
 
             Command autonomousCommand;

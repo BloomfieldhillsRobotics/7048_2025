@@ -9,8 +9,8 @@ public class AutoPoses {
         public static final Pose scoring2 = new Pose(48, 70, Math.toRadians(135));
         public static final Pose pickup1PPG = new Pose(46, 83, Math.toRadians(180));
         public static final Pose pickup2PPG = new Pose(19, 83, Math.toRadians(180));
-        public static final Pose pickup1PGP = new Pose(46, 59, Math.toRadians(180));
-        public static final Pose pickup2PGP = new Pose(19, 59, Math.toRadians(180));
+        public static final Pose pickup1PGP = new Pose(46, 60, Math.toRadians(180));
+        public static final Pose pickup2PGP = new Pose(19, 60, Math.toRadians(180));
         public static final Pose pickup1GPP = new Pose(46, 36, Math.toRadians(180));
         public static final Pose pickup2GPP = new Pose(19, 36, Math.toRadians(180));
     }
@@ -21,8 +21,8 @@ public class AutoPoses {
         public static final Pose scoring2 = new Pose(96, 49, Math.toRadians(45));
         public static final Pose pickup1PPG = new Pose(100, 10, Math.toRadians(0));
         public static final Pose pickup2PPG = new Pose(124, 83, Math.toRadians(0));
-        public static final Pose pickup1PGP = new Pose(100, 59, Math.toRadians(0));
-        public static final Pose pickup2PGP = new Pose(124, 59, Math.toRadians(0));
+        public static final Pose pickup1PGP = new Pose(100, 60, Math.toRadians(0));
+        public static final Pose pickup2PGP = new Pose(124, 60, Math.toRadians(0));
         public static final Pose pickup1GPP = new Pose(100, 36, Math.toRadians(0));
         public static final Pose pickup2GPP = new Pose(124, 36, Math.toRadians(0));
     }
@@ -45,8 +45,8 @@ public class AutoPoses {
         public static final Pose scoring2 = new Pose(52, 52, Math.toRadians(135));
         public static final Pose pickup1PPG = new Pose(46, 83, Math.toRadians(180));
         public static final Pose pickup2PPG = new Pose(19, 83, Math.toRadians(180));
-        public static final Pose pickup1PGP = new Pose(46, 59, Math.toRadians(180));
-        public static final Pose pickup2PGP = new Pose(19, 59, Math.toRadians(180));
+        public static final Pose pickup1PGP = new Pose(46, 60, Math.toRadians(180));
+        public static final Pose pickup2PGP = new Pose(19, 60, Math.toRadians(180));
         public static final Pose pickup1GPP = new Pose(46, 39, Math.toRadians(180));
         public static final Pose pickup2GPP = new Pose(19, 39, Math.toRadians(180));
     }

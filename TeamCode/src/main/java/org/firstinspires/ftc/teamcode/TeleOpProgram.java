@@ -69,7 +69,7 @@ public class TeleOpProgram extends NextFTCOpMode {
         double targetFlywheelSpeed = 1160 + 7.5 * distanceFromLimelightToGoalInches;
 
         // Clamp the speed to a safe range
-        return Math.max(Math.min(targetFlywheelSpeed, 2300), 1400);
+        return Math.max(Math.min(targetFlywheelSpeed, 2300), 1300);
 
 
     }
@@ -228,12 +228,12 @@ public class TeleOpProgram extends NextFTCOpMode {
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.BasketUp);
         Gamepads.gamepad2().dpadLeft()
                 .whenBecomesTrue(new InstantCommand(() -> {
-                    targetvel = Math.max(Math.min(targetvel + 20, 2300), 1400);
+                    targetvel = Math.max(Math.min(targetvel + 20, 2300), 1300);
                     FlyWheel.INSTANCE.setTargetSpeed(targetvel);
                         }));
         Gamepads.gamepad2().dpadRight()
                 .whenBecomesTrue(new InstantCommand(() -> {
-                    targetvel = Math.max(Math.min(targetvel - 20, 2300), 1400);
+                    targetvel = Math.max(Math.min(targetvel - 20, 2300), 1300);
                     FlyWheel.INSTANCE.setTargetSpeed(targetvel);
                 }));
         Gamepads.gamepad2().x()

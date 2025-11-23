@@ -32,7 +32,7 @@ public class PurpleProtonRobot extends SubsystemGroup {
             new SequentialGroup(
                     Elevator.INSTANCE.down,
                     Intake.INSTANCE.run,
-                    new Delay(.22),
+                    new Delay(.5),
                     Intake.INSTANCE.stop
             ).named("IntakeSeq");
     public final Command LifterStop =
