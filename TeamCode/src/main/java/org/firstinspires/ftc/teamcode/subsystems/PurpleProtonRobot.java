@@ -135,7 +135,7 @@ public class PurpleProtonRobot extends SubsystemGroup {
                     Elevator.INSTANCE.down,
                     Basket.INSTANCE.down,
                     FlyWheel.INSTANCE.backwards,
-                    new Delay(.5),
+                    new Delay(.7),
                     Basket.INSTANCE.up,
                     FlyWheel.INSTANCE.stop
             ).named("BasketDrop");

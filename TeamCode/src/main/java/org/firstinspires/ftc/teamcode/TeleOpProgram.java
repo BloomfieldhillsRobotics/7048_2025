@@ -45,11 +45,11 @@ public class TeleOpProgram extends NextFTCOpMode {
     private double dynamicFlywheelSpeed = 0.0; // Variable to hold our calculated speed
     private TelemetryManager telemetryM;
     private Limelight3A limelight;
-    private double targetvel = 1500;
+    private double targetvel = 1400;
     private double calculateSpeedFromVerticalOffset(double ty) {
         //refer to https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
         double targetOffsetAngle_Vertical = ty;
-        double limelightMountAngleDegrees = 0;
+        double limelightMountAngleDegrees = 20;
 
         // distance from the center of the Limelight lens to the floor
         double limelightLensHeightInches = 11.8;
@@ -63,11 +63,10 @@ public class TeleOpProgram extends NextFTCOpMode {
 
         //calculate distance
         double distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
-        double speed = 2400 * distanceFromLimelightToGoalInches / maximumDistance;
+        double targetFlywheelSpeed = 1160 + 7.5 * distanceFromLimelightToGoalInches;
 
         // Clamp the speed to a safe range
-       // return Math.max(1500, Math.min(2400, speed));
-        return distanceFromLimelightToGoalInches;
+        return Math.max(Math.min(targetFlywheelSpeed, 2300), 1400);
 
 
     }
@@ -80,20 +79,14 @@ public class TeleOpProgram extends NextFTCOpMode {
         );
     }
     DriverControlledCommand driverControlled = new PedroDriverControlled(
-           // () -> -Gamepads.gamepad1().leftStickY().get(),
-          //  () -> -Gamepads.gamepad1().leftStickX().get(),
-          //  () -> -Gamepads.gamepad1().rightStickX().get()
-            Gamepads.gamepad1().leftStickY().negate(), // changed to this as above was giving runtime exceptions
+            Gamepads.gamepad1().leftStickY().negate(),
             Gamepads.gamepad1().leftStickX().negate(),
             Gamepads.gamepad1().rightStickX().negate()
     );
 
-//    private HuskyLensTagDetector tagDetector;
-
 
     @Override public void onInit() {
         driverControlled.schedule();
-        //PedroComponent.follower().setStartingPose(startPose);
         PedroComponent.follower().setMaxPower(1);
         PedroComponent.follower().update();
 
@@ -102,7 +95,7 @@ public class TeleOpProgram extends NextFTCOpMode {
 
         limelight = hardwareMap.get(Limelight3A.class, "limelight");
         telemetry.setMsTransmissionInterval(11);
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(1);
         /*
          * Starts polling for data.
          */
@@ -124,8 +117,8 @@ public class TeleOpProgram extends NextFTCOpMode {
         telemetry.addData("Pipeline", "Index: %d, Type: %s",
                 status.getPipelineIndex(), status.getPipelineType());
 
-
         LLResult result = limelight.getLatestResult();
+
         if (result.isValid()) {
             // Access general information
             Pose3D botpose = result.getBotpose();
@@ -146,11 +139,6 @@ public class TeleOpProgram extends NextFTCOpMode {
 
             telemetry.addData("Botpose", botpose.toString());
 /*
-            // Access barcode results
-            List<LLResultTypes.BarcodeResult> barcodeResults = result.getBarcodeResults();
-            for (LLResultTypes.BarcodeResult br : barcodeResults) {
-                telemetry.addData("Barcode", "Data: %s", br.getData());
-            }
 
             // Access classifier results
             List<LLResultTypes.ClassifierResult> classifierResults = result.getClassifierResults();
@@ -216,7 +204,7 @@ public class TeleOpProgram extends NextFTCOpMode {
                 .whenBecomesTrue(new InstantCommand(() -> {
                     // When the button is pressed, get the latest calculated speed and set it.
                     //if (dynamicFlywheelSpeed > 0) { // Safety check
-                        FlyWheel.INSTANCE.setTargetSpeed(targetvel);
+                        FlyWheel.INSTANCE.setTargetSpeed(dynamicFlywheelSpeed);
                     //}
                 }))
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop); // Stop when released
@@ -228,11 +216,13 @@ public class TeleOpProgram extends NextFTCOpMode {
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.BasketUp);
         Gamepads.gamepad2().dpadLeft()
                 .whenBecomesTrue(new InstantCommand(() -> {
-                            FlyWheel.INSTANCE.setTargetSpeed(targetvel = targetvel + 100);
+                    targetvel = Math.max(Math.min(targetvel + 20, 2300), 1400);
+                    FlyWheel.INSTANCE.setTargetSpeed(targetvel);
                         }));
         Gamepads.gamepad2().dpadRight()
                 .whenBecomesTrue(new InstantCommand(() -> {
-                    FlyWheel.INSTANCE.setTargetSpeed(targetvel = targetvel - 100);
+                    targetvel = Math.max(Math.min(targetvel - 20, 2300), 1400);
+                    FlyWheel.INSTANCE.setTargetSpeed(targetvel);
                 }));
         Gamepads.gamepad2().x()
                 .whenBecomesTrue(FlyWheel.INSTANCE.superlongshot)
