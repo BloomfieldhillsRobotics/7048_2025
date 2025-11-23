@@ -46,6 +46,8 @@ public class TeleOpProgram extends NextFTCOpMode {
     private TelemetryManager telemetryM;
     private Limelight3A limelight;
     private double targetvel = 1400;
+    private double headingCorrection = 0;
+
     private double calculateSpeedFromVerticalOffset(double ty) {
         //refer to https://docs.limelightvision.io/docs/docs-limelight/tutorials/tutorial-estimating-distance
         double targetOffsetAngle_Vertical = ty;
@@ -70,6 +72,7 @@ public class TeleOpProgram extends NextFTCOpMode {
 
 
     }
+
     public TeleOpProgram() {
         addComponents(
                 new SubsystemComponent(PurpleProtonRobot.INSTANCE),
@@ -127,6 +130,7 @@ public class TeleOpProgram extends NextFTCOpMode {
             double parseLatency = result.getParseLatency();
 
             dynamicFlywheelSpeed = calculateSpeedFromVerticalOffset(result.getTy());
+            headingCorrection = result.getTx();
             //telemetry.addData("LL Latency", captureLatency + targetingLatency);
            // telemetry.addData("Parse Latency", parseLatency);
             //telemetry.addData("PythonOutput", java.util.Arrays.toString(result.getPythonOutput()));
@@ -208,6 +212,13 @@ public class TeleOpProgram extends NextFTCOpMode {
                     //}
                 }))
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop); // Stop when released
+        Gamepads.gamepad2().leftBumper()
+                        .whenBecomesTrue(new InstantCommand(() -> {
+                            PedroComponent.follower().turnDegrees(headingCorrection,false);
+                        }))
+                .whenBecomesFalse(new InstantCommand(() -> {
+                    PedroComponent.follower().startTeleOpDrive();
+                }));
         //Gamepads.gamepad2().b()
         //      .whenBecomesTrue(PurpleProtonRobot.INSTANCE.shortshot)
         //    .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
