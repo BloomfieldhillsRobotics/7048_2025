@@ -10,6 +10,6 @@ public class Elevator implements Subsystem {
 
     private Elevator() { }
     private ServoEx liftServo = new ServoEx("LiftServo");
-    public Command up = new SetPosition(liftServo, 0.32).requires(this);
-    public Command down = new SetPosition(liftServo, 0.6).requires(this);
+    public Command up = new SetPosition(liftServo, 0.7).requires(this);
+    public Command down = new SetPosition(liftServo, 0.36).requires(this);
 }

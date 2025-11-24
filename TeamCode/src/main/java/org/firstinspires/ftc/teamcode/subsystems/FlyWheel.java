@@ -18,9 +18,10 @@ import dev.nextftc.hardware.powerable.SetPower;
 @Configurable
 
 public class FlyWheel implements Subsystem {
-    public double targetspeed = 2400;
-    public static double deadband = 20;
-    public static double kP = 0.001, kI = 0, kD = 0, kV = 0.00045, kA = 0, kS = 0;
+    public double targetspeed = 1700;
+    public static double deadband = 5;
+    public static double kP = 0.001, kI = 0.00000000001, kD = 0.001, kV = 0.0004, kA = 0, kS = 0;
+    public static double kP2 = 0.001, kI2 = 0.00000000001, kD2 = 0.001, kV2 = 0.00042, kA2 = 0, kS2 = 0;
     public static final FlyWheel INSTANCE = new FlyWheel();
     private FlyWheel() { }
 
@@ -38,10 +39,9 @@ public class FlyWheel implements Subsystem {
     public final BasicFeedforwardParameters ff =
             new BasicFeedforwardParameters(kV,kA,kS);
 
-    private final ControlSystem controller = ControlSystem.builder()
-            .velPid(pid)
-            .basicFF(ff)
-            .build();
+    public final PIDCoefficients pid2 = new PIDCoefficients(kP2,kI2,kD2);
+    public final BasicFeedforwardParameters ff2 =
+            new BasicFeedforwardParameters(kV2,kA2,kS2);
 
     private final ControlSystem controllerright = ControlSystem.builder()
             .velPid(pid)
@@ -49,8 +49,8 @@ public class FlyWheel implements Subsystem {
             .build();
 
     private final ControlSystem controllerleft = ControlSystem.builder()
-            .velPid(pid)
-            .basicFF(ff)
+            .velPid(pid2)
+            .basicFF(ff2)
             .build();
 
     public void setTargetSpeed(double speed) {

@@ -42,7 +42,7 @@ import java.util.List;
 @TeleOp(name = "Los Protos")
 @Configurable //Panels
 public class TeleOpProgram extends NextFTCOpMode {
-    private double dynamicFlywheelSpeed = 0.0; // Variable to hold our calculated speed
+    private double dynamicFlywheelSpeed = 1600; // Variable to hold our calculated speed
     private TelemetryManager telemetryM;
     private Limelight3A limelight;
     private double targetvel = 1400;
@@ -66,7 +66,7 @@ public class TeleOpProgram extends NextFTCOpMode {
 
         //calculate distance
         distanceFromLimelightToGoalInches = (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
-        double targetFlywheelSpeed = 1160 + 7.5 * distanceFromLimelightToGoalInches;
+        double targetFlywheelSpeed = 1231.9 + 7.7455*distanceFromLimelightToGoalInches -0.0163 * Math.pow(distanceFromLimelightToGoalInches, 2);
 
         // Clamp the speed to a safe range
         return Math.max(Math.min(targetFlywheelSpeed, 2300), 1300);
@@ -171,6 +171,7 @@ public class TeleOpProgram extends NextFTCOpMode {
 
 
         } else {
+            dynamicFlywheelSpeed = 1600;
             telemetry.addData("Limelight", "No data available");
             telemetry.addData("Dynamic Flywheel Target", "%.2f", dynamicFlywheelSpeed);
         }
