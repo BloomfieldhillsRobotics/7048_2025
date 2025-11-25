@@ -4,6 +4,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
 import dev.nextftc.core.commands.Command;
+
 import static org.firstinspires.ftc.teamcode.constants.AutoPoses.BlueShort.*;
 
 @Autonomous(name = "AutoBlueShort", preselectTeleOp = "Los Protos")
@@ -11,6 +12,8 @@ public class AutoBlueShort extends BaseAutonomous {
 
     @Override
     protected Pose getStartPose() { return startPose; }
+    @Override
+    protected Pose getScanPose() { return scanPose; }
     @Override
     protected Pose getScoring1Pose() { return scoring1; }
     @Override
