@@ -105,7 +105,6 @@ public class TeleOpProgram extends NextFTCOpMode {
          */
         limelight.start();
         BaseHook.INSTANCE.BaseHookLock(); // Lock the servo to hold the base plate
-
     }
 
     @Override public void onUpdate() {
@@ -221,9 +220,9 @@ public class TeleOpProgram extends NextFTCOpMode {
                 .whenBecomesFalse(new InstantCommand(() -> {
                     PedroComponent.follower().startTeleOpDrive();
                 }));
-        Gamepads.gamepad1().b()
-                        .whenBecomesTrue(PurpleProtonRobot.INSTANCE.BaseUnlock)
-                        .whenBecomesFalse(PurpleProtonRobot.INSTANCE.BaseLock);
+       // Gamepads.gamepad1().b()
+         //               .whenBecomesTrue(PurpleProtonRobot.INSTANCE.BaseUnlock)
+          //              .whenBecomesFalse(PurpleProtonRobot.INSTANCE.BaseLock);
         //      .whenBecomesTrue(PurpleProtonRobot.INSTANCE.shortshot)
         //    .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
         Gamepads.gamepad2().y()

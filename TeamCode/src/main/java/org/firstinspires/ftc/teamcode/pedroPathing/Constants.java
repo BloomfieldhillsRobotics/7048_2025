@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.pedroPathing;
 
 import static java.lang.Boolean.TRUE;
 
+import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
@@ -16,7 +17,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(11.5)
+            .mass(12)
+           // .headingPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0.01, 0))
             .forwardZeroPowerAcceleration(-27.4)
             .lateralZeroPowerAcceleration(-52.9);
 
@@ -49,7 +51,7 @@ public class Constants {
             .IMU_Orientation(
                     new RevHubOrientationOnRobot(
                             RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                            RevHubOrientationOnRobot.UsbFacingDirection.UP
+                            RevHubOrientationOnRobot.UsbFacingDirection.FORWARD
                     )
             );
 
