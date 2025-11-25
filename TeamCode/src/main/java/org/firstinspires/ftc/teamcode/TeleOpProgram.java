@@ -42,7 +42,7 @@ import java.util.List;
 @TeleOp(name = "Los Protos")
 @Configurable //Panels
 public class TeleOpProgram extends NextFTCOpMode {
-    private double dynamicFlywheelSpeed = 1600; // Variable to hold our calculated speed
+    //public double dynamicFlywheelSpeed = 1600; // Variable to hold our calculated speed
     private TelemetryManager telemetryM;
     private Limelight3A limelight;
     private double targetvel = 1400;
@@ -70,8 +70,6 @@ public class TeleOpProgram extends NextFTCOpMode {
 
         // Clamp the speed to a safe range
         return Math.max(Math.min(targetFlywheelSpeed, 2300), 1300);
-
-
     }
 
     public TeleOpProgram() {
@@ -130,7 +128,7 @@ public class TeleOpProgram extends NextFTCOpMode {
             double targetingLatency = result.getTargetingLatency();
             double parseLatency = result.getParseLatency();
 
-            dynamicFlywheelSpeed = calculateSpeedFromVerticalOffset(result.getTy());
+            PurpleProtonRobot.dynamicFlywheelSpeed = calculateSpeedFromVerticalOffset(result.getTy());
             headingCorrection = result.getTx();
             //telemetry.addData("LL Latency", captureLatency + targetingLatency);
            // telemetry.addData("Parse Latency", parseLatency);
@@ -171,9 +169,9 @@ public class TeleOpProgram extends NextFTCOpMode {
 
 
         } else {
-            dynamicFlywheelSpeed = 1600;
+            PurpleProtonRobot.dynamicFlywheelSpeed = 1600;
             telemetry.addData("Limelight", "No data available");
-            telemetry.addData("Dynamic Flywheel Target", "%.2f", dynamicFlywheelSpeed);
+            telemetry.addData("Dynamic Flywheel Target", "%.2f", PurpleProtonRobot.dynamicFlywheelSpeed);
         }
 
         Pose pose = PedroComponent.follower().getPose();
@@ -207,13 +205,12 @@ public class TeleOpProgram extends NextFTCOpMode {
         Gamepads.gamepad2().dpadDown()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.elevatorDown);
         Gamepads.gamepad2().rightBumper()
-                .whenBecomesTrue(new InstantCommand(() -> {
-                    // When the button is pressed, get the latest calculated speed and set it.
-                    //if (dynamicFlywheelSpeed > 0) { // Safety check
-                        FlyWheel.INSTANCE.setTargetSpeed(dynamicFlywheelSpeed);
-                    //}
-                }))
-                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop); // Stop when released
+                //.whenBecomesTrue(new InstantCommand(() -> {
+                  //      FlyWheel.INSTANCE.setTargetSpeed(PurpleProtonRobot.dynamicFlywheelSpeed);
+                //}))
+                .whenBecomesTrue(PurpleProtonRobot.INSTANCE.AutoShoot)
+                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop) // Stop when released
+                .whenBecomesFalse(PurpleProtonRobot.INSTANCE.elevatorDown);
         Gamepads.gamepad2().leftBumper()
                         .whenBecomesTrue(new InstantCommand(() -> {
                             PedroComponent.follower().turnDegrees(headingCorrection,false);
@@ -227,6 +224,8 @@ public class TeleOpProgram extends NextFTCOpMode {
         Gamepads.gamepad2().y()
                 .whenBecomesTrue(PurpleProtonRobot.INSTANCE.BasketDrop)
                 .whenBecomesFalse(PurpleProtonRobot.INSTANCE.BasketUp);
+        // Use this for testing and calibration
+        /*
         Gamepads.gamepad2().dpadLeft()
                 .whenBecomesTrue(new InstantCommand(() -> {
                     targetvel = Math.max(Math.min(targetvel + 20, 2300), 1300);
@@ -237,6 +236,7 @@ public class TeleOpProgram extends NextFTCOpMode {
                     targetvel = Math.max(Math.min(targetvel - 20, 2300), 1300);
                     FlyWheel.INSTANCE.setTargetSpeed(targetvel);
                 }));
+         */
         Gamepads.gamepad2().x()
                 .whenBecomesTrue(FlyWheel.INSTANCE.superlongshot)
         .whenBecomesFalse(FlyWheel.INSTANCE.stop);

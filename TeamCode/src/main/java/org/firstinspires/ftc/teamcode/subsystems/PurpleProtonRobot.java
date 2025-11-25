@@ -2,6 +2,8 @@
 
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import org.firstinspires.ftc.teamcode.TeleOpProgram;
+
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
@@ -17,9 +19,17 @@ public class PurpleProtonRobot extends SubsystemGroup {
                 FlyWheel.INSTANCE,
                 Elevator.INSTANCE,
                 Basket.INSTANCE,
-                Lifter.INSTANCE
+                Lifter.INSTANCE,
+                BaseHook.INSTANCE
         );
     }
+    public static double dynamicFlywheelSpeed = 1600;
+
+    public final Command autoshot =
+            new SequentialGroup(
+                    new InstantCommand(() -> {
+                        FlyWheel.INSTANCE.setTargetSpeed(dynamicFlywheelSpeed);
+                    }));
     public final Command IntakeStop =
             new SequentialGroup(
                     Intake.INSTANCE.stop
@@ -47,29 +57,25 @@ public class PurpleProtonRobot extends SubsystemGroup {
             new SequentialGroup(
                     Lifter.INSTANCE.runBackwards
             ).named("LifterRunBackwards");
-    public final Command Shoot =
+    public final Command AutoShoot =
             new SequentialGroup(
                     Elevator.INSTANCE.down,
-                    new Delay(.5),
-                    Intake.INSTANCE.run,
-                    new Delay(.5),
-                    Intake.INSTANCE.stop,
-                    new Delay(.5),
-                    FlyWheel.INSTANCE.shortshot,
+                    new Delay(.2),
+                    autoshot,
                     new Delay(.5),
                     Elevator.INSTANCE.up,
                     new Delay(.5),
-                    FlyWheel.INSTANCE.stop,
-                    new Delay(.5),
-                    Elevator.INSTANCE.down
-            ).named("Shoot");
+                    Elevator.INSTANCE.down,
+                    new Delay(.2),
+                    FlyWheel.INSTANCE.stop
+            ).named("AutoShoot");
 
     public final Command ShortShot =
             new SequentialGroup(
                     FlyWheel.INSTANCE.shortshot,
                     new Delay(.5),
                     Elevator.INSTANCE.up,
-                    new Delay(.8),
+                    new Delay(.5),
                     Elevator.INSTANCE.down,
                     new Delay(.5),
                     FlyWheel.INSTANCE.stop
@@ -103,7 +109,7 @@ public class PurpleProtonRobot extends SubsystemGroup {
                     IntakeSeq,
                     new Delay(2),
                     IntakeStop,
-                    Shoot
+                    AutoShoot
             ).named("Score");
     public final Command elevatorUp =
             new SequentialGroup(
@@ -115,7 +121,6 @@ public class PurpleProtonRobot extends SubsystemGroup {
             ).named("ElevatorDown");
     public final Command superlongshot =
             new SequentialGroup(
-                    //FlyWheel.INSTANCE.superlongshot
                    FlyWheel.INSTANCE.superlongshot
             ).named("Superlongshot");
     public final Command longshot =
@@ -170,34 +175,34 @@ public class PurpleProtonRobot extends SubsystemGroup {
                     LongShot,
                     IntakeSeq,
                     LongShot
-            ).named("AutoPGP3LongShot");
+            ).named("AutoGPP3LongShot");
     public final Command AutoPPG3ShortShot =
             new SequentialGroup(
                     IntakeSeq,
-                    LongShot,
+                    ShortShot,
                     IntakeSeq,
-                    LongShot,
+                    ShortShot,
                     BasketDrop,
-                    LongShot
+                    ShortShot
             ).named("AutoPPG3ShortShot");
     public final Command AutoPGP3ShortShot =
             new SequentialGroup(
                     IntakeSeq,
-                    LongShot,
+                    ShortShot,
                     BasketDrop,
-                    LongShot,
+                    ShortShot,
                     IntakeSeq,
-                    LongShot
+                    ShortShot
             ).named("AutoPGP3ShortShot");
     public final Command AutoGPP3ShortShot =
             new SequentialGroup(
                     BasketDrop,
-                    LongShot,
+                    ShortShot,
                     IntakeSeq,
-                    LongShot,
+                    ShortShot,
                     IntakeSeq,
-                    LongShot
-            ).named("AutoPGP3ShortShot");
+                    ShortShot
+            ).named("AutoGPP3ShortShot");
     public final Command Auto3LongShot =
             new SequentialGroup(
                     IntakeSeq,
@@ -210,11 +215,11 @@ public class PurpleProtonRobot extends SubsystemGroup {
     public final Command Auto3ShortShot =
             new SequentialGroup(
                     IntakeSeq,
-                    LongShot,
+                    ShortShot,
                     IntakeSeq,
-                    LongShot,
+                    ShortShot,
                     IntakeSeq,
-                    LongShot
+                    ShortShot
             ).named("Auto3ShortShot");
 
 }

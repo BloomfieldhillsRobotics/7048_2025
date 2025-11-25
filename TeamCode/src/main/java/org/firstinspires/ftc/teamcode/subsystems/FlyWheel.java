@@ -28,13 +28,6 @@ public class FlyWheel implements Subsystem {
     private MotorEx FlyWheelRight = new MotorEx("FlywheelRight");
     private MotorEx FlyWheelLeft = new MotorEx("FlywheelLeft");
 
-   //MotorGroup FlyWheelGroup = new MotorGroup(
-            //new MotorEx("FlywheelRight"),
-            //new MotorEx("FlywheelLeft").reversed()
-    //        FlyWheelRight,
-    //      FlyWheelLeft.reversed()
-    //);
-
     public final PIDCoefficients pid = new PIDCoefficients(kP,kI,kD);
     public final BasicFeedforwardParameters ff =
             new BasicFeedforwardParameters(kV,kA,kS);
@@ -68,6 +61,7 @@ public class FlyWheel implements Subsystem {
     //        new RunToVelocity(controllerright, 2300, deadband).requires(this),
      //       new RunToVelocity(controllerleft, -2300, deadband).requires(this)
     //);
+
     public Command superlongshot = new InstantCommand(() -> {
         setTargetSpeed(2300);
     });
