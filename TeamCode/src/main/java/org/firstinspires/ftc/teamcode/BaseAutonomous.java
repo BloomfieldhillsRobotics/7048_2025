@@ -10,12 +10,14 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.AutonomousPaths;
+import org.firstinspires.ftc.teamcode.subsystems.BaseHook;
 import org.firstinspires.ftc.teamcode.subsystems.Drawing;
 import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
 import java.util.List;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
@@ -166,6 +168,8 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
         opmodeTimer.resetTimer();
 
         buildPaths();
+
+        BaseHook.INSTANCE.BaseHookLock(); // Lock the servo to hold the base plate
 
         log("Status", "INIT: Ready");
     }

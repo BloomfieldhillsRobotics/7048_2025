@@ -32,8 +32,10 @@ import dev.nextftc.hardware.driving.DriverControlledCommand;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.subsystems.BaseHook;
 import org.firstinspires.ftc.teamcode.subsystems.Drawing;
 import org.firstinspires.ftc.teamcode.subsystems.FlyWheel;
+import org.firstinspires.ftc.teamcode.subsystems.BaseHook;
 import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
 
 import java.util.List;
@@ -102,6 +104,7 @@ public class TeleOpProgram extends NextFTCOpMode {
          * Starts polling for data.
          */
         limelight.start();
+        BaseHook.INSTANCE.BaseHookLock(); // Lock the servo to hold the base plate
 
     }
 
@@ -183,8 +186,8 @@ public class TeleOpProgram extends NextFTCOpMode {
         Drawing.drawOnlyCurrent(pose);
         telemetryM.update();
         telemetry.update();
-
     }
+
     public void onStartButtonPressed() {
         PedroComponent.follower().startTeleopDrive();
         Gamepads.gamepad1().y()
@@ -218,7 +221,9 @@ public class TeleOpProgram extends NextFTCOpMode {
                 .whenBecomesFalse(new InstantCommand(() -> {
                     PedroComponent.follower().startTeleOpDrive();
                 }));
-        //Gamepads.gamepad2().b()
+        Gamepads.gamepad1().b()
+                        .whenBecomesTrue(PurpleProtonRobot.INSTANCE.BaseUnlock)
+                        .whenBecomesFalse(PurpleProtonRobot.INSTANCE.BaseLock);
         //      .whenBecomesTrue(PurpleProtonRobot.INSTANCE.shortshot)
         //    .whenBecomesFalse(PurpleProtonRobot.INSTANCE.FlyWheelStop);
         Gamepads.gamepad2().y()

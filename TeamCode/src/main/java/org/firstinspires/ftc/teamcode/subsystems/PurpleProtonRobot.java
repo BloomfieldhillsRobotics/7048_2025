@@ -45,12 +45,22 @@ public class PurpleProtonRobot extends SubsystemGroup {
                     new Delay(.5),
                     Intake.INSTANCE.stop
             ).named("IntakeSeq");
+    public final Command BaseLock =
+            new SequentialGroup(
+                    BaseHook.INSTANCE.lock
+            ).named("BaseLock");
+    public final Command BaseUnlock =
+            new SequentialGroup(
+                    BaseHook.INSTANCE.unlock
+            ).named("BaseUnlock");
     public final Command LifterStop =
             new SequentialGroup(
                     Lifter.INSTANCE.stop
             ).named("LifterStop");
     public final Command LifterRun =
             new SequentialGroup(
+                    BaseUnlock,
+                    new Delay(.7),
                     Lifter.INSTANCE.run
             ).named("LifterRun");
     public final Command LifterRunBackwards =
