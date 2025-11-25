@@ -6,9 +6,47 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 
+import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 
-public class AutonomousPaths {
+public class Autonomous {
+
+    /**
+     * Builds a standard autonomous cycle command.
+     * This sequence involves aligning, shooting, going to the stack, collecting,
+     * returning to the backboard, shooting again, and then parking.
+     *
+     * @param alignPath       The path to align for the first shot.
+     * @param initialShot     The command to score the first (purple) pixel.
+     * @param toPickupPath    The path to the pixel stack.
+     * @param scoopPath       The short path to scoop up pixels.
+     * @param reverseScoopPath The short path to back away from the stack.
+     * @param backToScorePath The path from the stack back to the scoring position.
+     * @param finalShot       The command to score the collected pixels.
+     * @param leavePath       The path to park.
+     * @return A SequentialGroup command that runs the entire autonomous routine.
+     */
+    public static Command buildCycleCommand(
+            PathChain alignPath, Command initialShot,
+            PathChain toPickupPath, PathChain scoopPath,
+            PathChain reverseScoopPath, PathChain backToScorePath,
+            Command finalShot, PathChain leavePath) {
+
+        return new SequentialGroup(
+                new FollowPath(alignPath, true, 0.9),
+                initialShot,
+                PurpleProtonRobot.INSTANCE.IntakeRun,
+                new FollowPath(toPickupPath, true, 0.9),
+                new FollowPath(scoopPath, true, 0.3),
+                PurpleProtonRobot.INSTANCE.IntakeStop,
+                new FollowPath(reverseScoopPath, true, 0.9),
+                new FollowPath(backToScorePath, true, 0.9),
+                finalShot,
+                new FollowPath(leavePath, true, 0.9)
+        );
+    }
 
     public static class PathContainer {
         public PathChain alignPPG, toPickup1PPG, scoopPPG, reversescoopPPG, backToScorePPG, leavePPG;
