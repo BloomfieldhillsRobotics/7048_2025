@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.ftc.FTCCoordinates;
+import com.pedropathing.geometry.PedroCoordinates;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.hardware.limelightvision.LLResult;
@@ -66,6 +71,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
 
     private TelemetryManager panelsTelemetry;
     private int foundID   = 0;
+    private boolean AprilTagInitiallyNotFound = FALSE;
 
     // === Limelight ===
     private Limelight3A limelight;
@@ -142,13 +148,13 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             timeout++;
         }
         if(foundID == 0 && timeout > DETECTION_TIMEOUT)
-
-        log("Warning", "No tag detected – using PGP");
+            log("Warning", "No tag detected – using PGP");
     }
     private Command createAutonomousCycleCommand() {
         switch (foundID) {
             case PPG_TAG_ID:
                 log("Selected Path", "PPG");
+
                 return Autonomous.buildCycleCommand(
                         alignPPG, getPpgShot(),
                         toPickup1PPG, scoopPPG, reversescoopPPG,
@@ -170,6 +176,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                 );
             default:
                 log("No Path Found","aligning");
+                AprilTagInitiallyNotFound = TRUE;
                 return new SequentialGroup(
                         new FollowPath(alignScan, true, 0.9),
                         createAutonomousCycleCommand2()
@@ -253,11 +260,13 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             limelight.pipelineSwitch(DISTANCE_DETECT_PIPELINE); // Switch to pipeline 1 to focus on navigation tags 20, 24
             PedroComponent.follower().setStartingPose(getStartPose()); // Try setting starting pose again as backup after init.
             drawOnlyCurrent(PedroComponent.follower().getPose());
-
             //log("Time (s)", String.format("%.2f"));
             log("Status", "START: Running");
             createAutonomousCycleCommand().schedule();
-            createAutonomousCycleCommand2().schedule();
+            if(AprilTagInitiallyNotFound) {
+                detectAprilTag();
+                createAutonomousCycleCommand2().schedule();
+            }
     }
 
     @Override
