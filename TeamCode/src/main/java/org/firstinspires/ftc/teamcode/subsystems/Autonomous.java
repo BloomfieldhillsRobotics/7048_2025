@@ -29,7 +29,7 @@ public class Autonomous {
      * @return A SequentialGroup command that runs the entire autonomous routine.
      */
     public static Command buildCycleCommand(
-            PathChain alignScan, PathChain alignPath, Command initialShot,
+            PathChain alignPath, Command initialShot,
             PathChain toPickupPath, PathChain scoopPath,
             PathChain reverseScoopPath, PathChain backToScorePath,
             Command finalShot, PathChain leavePath) {
@@ -47,16 +47,16 @@ public class Autonomous {
                 new FollowPath(leavePath, true, 0.9)
         );
     }
-
     public static class PathContainer {
-        public PathChain alignScan;
+        public PathChain alignScan, scanToScore;
         public PathChain alignPPG, toPickup1PPG, scoopPPG, reversescoopPPG, backToScorePPG, leavePPG;
         public PathChain alignPGP, toPickup1PGP, scoopPGP, reversescoopPGP, backToScorePGP, leavePGP;
         public PathChain alignGPP, toPickup1GPP, scoopGPP, reversescoopGPP, backToScoreGPP, leaveGPP;
     }
 
     public static PathContainer buildPaths(
-            Pose startPose, Pose scanPose, Pose scoring1, Pose scoring2,
+            Pose startPose, Pose scanPose,
+            Pose scoring1, Pose scoring2,
             Pose pickup1PPG, Pose pickup2PPG,
             Pose pickup1PGP, Pose pickup2PGP,
             Pose pickup1GPP, Pose pickup2GPP
@@ -67,8 +67,14 @@ public class Autonomous {
                 .addPath(new BezierLine(startPose, scanPose))
                 .setLinearHeadingInterpolation(startPose.getHeading(), scanPose.getHeading())
                 .build();
-        paths.alignPPG = PedroComponent.follower().pathBuilder()
+
+        paths.scanToScore = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(scanPose, scoring1))
+                .setLinearHeadingInterpolation(scanPose.getHeading(), scoring1.getHeading())
+                .build();
+
+        paths.alignPPG = PedroComponent.follower().pathBuilder()
+                .addPath(new BezierLine(startPose, scoring1))
                 .setLinearHeadingInterpolation(scanPose.getHeading(), scoring1.getHeading())
                 .build();
 

@@ -38,7 +38,6 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
     protected abstract Pose getPickup2PGPPose();
     protected abstract Pose getPickup1GPPPose();
     protected abstract Pose getPickup2GPPPose();
-
     protected abstract Command getPpgShot();
     protected abstract Command getPgpShot();
     protected abstract Command getGppShot();
@@ -72,7 +71,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
     private Limelight3A limelight;
 
     // === Path Chains ===
-    private PathChain alignScan;
+    private PathChain alignScan, scanToScore;
     private PathChain alignPPG, toPickup1PPG, scoopPPG, reversescoopPPG, backToScorePPG, leavePPG;
     private PathChain alignPGP, toPickup1PGP, scoopPGP, reversescoopPGP, backToScorePGP, leavePGP;
     private PathChain alignGPP, toPickup1GPP, scoopGPP, reversescoopGPP, backToScoreGPP, leaveGPP;
@@ -101,6 +100,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
         );
         alignPPG = paths.alignPPG;
         alignScan = paths.alignScan;
+        scanToScore = paths.scanToScore;
         toPickup1PPG = paths.toPickup1PPG;
         scoopPPG = paths.scoopPPG;
         reversescoopPPG = paths.reversescoopPPG;
@@ -150,36 +150,58 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             case PPG_TAG_ID:
                 log("Selected Path", "PPG");
                 return Autonomous.buildCycleCommand(
-                        alignScan, alignPPG, getPpgShot(),
+                        alignPPG, getPpgShot(),
                         toPickup1PPG, scoopPPG, reversescoopPPG,
                         backToScorePPG, getFinalShot(), leavePPG
                 );
             case PGP_TAG_ID:
                 log("Selected Path", "PGP");
                 return Autonomous.buildCycleCommand(
-                        alignScan, alignPGP, getPgpShot(),
+                        alignPGP, getPgpShot(),
                         toPickup1PGP, scoopPGP, reversescoopPGP,
                         backToScorePGP, getFinalShot(), leavePGP
                 );
             case GPP_TAG_ID:
-            case 100:
                 log("Selected Path", "GPP (or default)");
                 return Autonomous.buildCycleCommand(
-                        alignScan, alignGPP, getGppShot(),
+                        alignGPP, getGppShot(),
                         toPickup1GPP, scoopGPP, reversescoopGPP,
                         backToScoreGPP, getFinalShot(), leaveGPP
                 );
             default:
                 log("No Path Found","aligning");
-                foundID = 100;
                 return new SequentialGroup(
-                        new FollowPath(alignScan, true, 0.9)
+                        new FollowPath(alignScan, true, 0.9),
+                        createAutonomousCycleCommand2()
                 );
         }
     };
     private Command createAutonomousCycleCommand2() {
         detectAprilTag();
-        return createAutonomousCycleCommand();
+        switch (foundID) {
+            case PPG_TAG_ID:
+                log("Selected Path", "PPG");
+                return Autonomous.buildCycleCommand(
+                        scanToScore, getPpgShot(),
+                        toPickup1PPG, scoopPPG, reversescoopPPG,
+                        backToScorePPG, getFinalShot(), leavePPG
+                );
+            case PGP_TAG_ID:
+                log("Selected Path", "PGP");
+                return Autonomous.buildCycleCommand(
+                        scanToScore, getPgpShot(),
+                        toPickup1PGP, scoopPGP, reversescoopPGP,
+                        backToScorePGP, getFinalShot(), leavePGP
+                );
+            case GPP_TAG_ID:
+            default:
+                log("Selected Path", "GPP (or default)");
+                return Autonomous.buildCycleCommand(
+                        scanToScore, getGppShot(),
+                        toPickup1GPP, scoopGPP, reversescoopGPP,
+                        backToScoreGPP, getFinalShot(), leaveGPP
+                );
+        }
     }
 
     // ==============================================================
@@ -219,6 +241,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
         log("Starting pose", getStartPose());
         log("Current pose", PedroComponent.follower().getPose());
         log("Status", "INIT_LOOP: Press START");
+        PedroComponent.follower().setStartingPose(getStartPose());
         telemetry.update();
         drawOnlyCurrent(PedroComponent.follower().getPose());
     }
