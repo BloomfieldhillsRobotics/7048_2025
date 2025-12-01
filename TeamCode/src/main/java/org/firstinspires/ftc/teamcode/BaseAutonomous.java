@@ -29,7 +29,6 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
 
     // Abstract methods for subclasses to provide specific values
     protected abstract Pose getStartPose();
-    protected abstract Pose getScanPose();
     protected abstract Pose getScoring1Pose();
     protected abstract Pose getScoring2Pose();
     protected abstract Pose getPickup1PPGPose();
@@ -72,7 +71,6 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
     private Limelight3A limelight;
 
     // === Path Chains ===
-    private PathChain alignScan;
     private PathChain alignPPG, toPickup1PPG, scoopPPG, reversescoopPPG, backToScorePPG, leavePPG;
     private PathChain alignPGP, toPickup1PGP, scoopPGP, reversescoopPGP, backToScorePGP, leavePGP;
     private PathChain alignGPP, toPickup1GPP, scoopGPP, reversescoopGPP, backToScoreGPP, leaveGPP;
@@ -93,14 +91,12 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
     // === Path Building ===
     private void buildPaths() {
         Autonomous.PathContainer paths = Autonomous.buildPaths(
-                getScanPose(),
                 getStartPose(), getScoring1Pose(), getScoring2Pose(),
                 getPickup1PPGPose(), getPickup2PPGPose(),
                 getPickup1PGPPose(), getPickup2PGPPose(),
                 getPickup1GPPPose(), getPickup2GPPPose()
         );
         alignPPG = paths.alignPPG;
-        alignScan = paths.alignScan;
         toPickup1PPG = paths.toPickup1PPG;
         scoopPPG = paths.scoopPPG;
         reversescoopPPG = paths.reversescoopPPG;
@@ -142,44 +138,8 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             timeout++;
         }
         if(foundID == 0 && timeout > DETECTION_TIMEOUT)
-
+            foundID = PGP_TAG_ID;
         log("Warning", "No tag detected – using PGP");
-    }
-    private Command createAutonomousCycleCommand() {
-        switch (foundID) {
-            case PPG_TAG_ID:
-                log("Selected Path", "PPG");
-                return Autonomous.buildCycleCommand(
-                        alignScan, alignPPG, getPpgShot(),
-                        toPickup1PPG, scoopPPG, reversescoopPPG,
-                        backToScorePPG, getFinalShot(), leavePPG
-                );
-            case PGP_TAG_ID:
-                log("Selected Path", "PGP");
-                return Autonomous.buildCycleCommand(
-                        alignScan, alignPGP, getPgpShot(),
-                        toPickup1PGP, scoopPGP, reversescoopPGP,
-                        backToScorePGP, getFinalShot(), leavePGP
-                );
-            case GPP_TAG_ID:
-            case 100:
-                log("Selected Path", "GPP (or default)");
-                return Autonomous.buildCycleCommand(
-                        alignScan, alignGPP, getGppShot(),
-                        toPickup1GPP, scoopGPP, reversescoopGPP,
-                        backToScoreGPP, getFinalShot(), leaveGPP
-                );
-            default:
-                log("No Path Found","aligning");
-                foundID = 100;
-                return new SequentialGroup(
-                        new FollowPath(alignScan, true, 0.9)
-                );
-        }
-    };
-    private Command createAutonomousCycleCommand2() {
-        detectAprilTag();
-        return createAutonomousCycleCommand();
     }
 
     // ==============================================================
@@ -233,8 +193,37 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
 
             //log("Time (s)", String.format("%.2f"));
             log("Status", "START: Running");
-            createAutonomousCycleCommand().schedule();
-            createAutonomousCycleCommand2().schedule();
+
+            Command autonomousCommand;
+            PathChain finalAlignPath = null;
+
+        // This switch statement is now much cleaner and easier to read!
+        switch (foundID) {
+            case PPG_TAG_ID:
+                autonomousCommand = Autonomous.buildCycleCommand(
+                        alignPPG, getPpgShot(),
+                        toPickup1PPG, scoopPPG, reversescoopPPG,
+                        backToScorePPG, getFinalShot(), leavePPG
+                );
+                break;
+            case PGP_TAG_ID:
+                autonomousCommand = Autonomous.buildCycleCommand(
+                        alignPGP, getPgpShot(),
+                        toPickup1PGP, scoopPGP, reversescoopPGP,
+                        backToScorePGP, getFinalShot(), leavePGP
+                );
+                break;
+            case GPP_TAG_ID:
+            default: // Default to GPP if something goes wrong
+                autonomousCommand = Autonomous.buildCycleCommand(
+                        alignGPP, getGppShot(),
+                        toPickup1GPP, scoopGPP, reversescoopGPP,
+                        backToScoreGPP, getFinalShot(), leaveGPP
+                );
+                break;
+        }
+
+        autonomousCommand.schedule();
     }
 
     @Override
