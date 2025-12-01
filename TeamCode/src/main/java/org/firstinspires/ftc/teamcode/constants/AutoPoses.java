@@ -4,8 +4,8 @@ import com.pedropathing.geometry.Pose;
 
 public class AutoPoses {
     public static class BlueShort {
-        public static final Pose startPose = new Pose(27.5, 132.3, Math.toRadians(330));
-        public static final Pose scanPose = new Pose(83, 118, Math.toRadians(90));
+        public static final Pose startPose = new Pose(27.5, 132.3, Math.toRadians(5.56));
+        public static final Pose scanPose = new Pose(72, 119, Math.toRadians(90));
         public static final Pose scoring1 = new Pose(28, 115, Math.toRadians(135));
         public static final Pose scoring2 = new Pose(48, 70, Math.toRadians(135));
         public static final Pose pickup1PPG = new Pose(46, 83, Math.toRadians(180));
@@ -17,8 +17,8 @@ public class AutoPoses {
     }
 
     public static class RedShort {
-        public static final Pose startPose = new Pose(121.8, 134, Math.toRadians(210));
-        public static final Pose scanPose = new Pose(83, 118, Math.toRadians(90));
+        public static final Pose startPose = new Pose(121.8, 134, Math.toRadians(3.81));
+        public static final Pose scanPose = new Pose(72, 119, Math.toRadians(90));
         public static final Pose scoring1 = new Pose(116, 115, Math.toRadians(45));
         public static final Pose scoring2 = new Pose(96, 49, Math.toRadians(45));
         public static final Pose pickup1PPG = new Pose(100, 10, Math.toRadians(0));
