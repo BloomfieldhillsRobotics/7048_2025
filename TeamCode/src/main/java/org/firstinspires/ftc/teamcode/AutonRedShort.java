@@ -12,6 +12,8 @@ public class AutonRedShort extends BaseAutonomous {
     @Override
     protected Pose getStartPose() { return startPose; }
     @Override
+    protected Pose getScanPose() { return scanPose; }
+    @Override
     protected Pose getScoring1Pose() { return scoring1; }
     @Override
     protected Pose getScoring2Pose() { return scoring2; }

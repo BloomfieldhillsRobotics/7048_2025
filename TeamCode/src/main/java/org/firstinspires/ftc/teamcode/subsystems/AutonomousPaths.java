@@ -11,18 +11,30 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 public class AutonomousPaths {
 
     public static class PathContainer {
+        public PathChain alignScan, scanToScore;
         public PathChain alignPPG, toPickup1PPG, scoopPPG, reversescoopPPG, backToScorePPG, leavePPG;
         public PathChain alignPGP, toPickup1PGP, scoopPGP, reversescoopPGP, backToScorePGP, leavePGP;
         public PathChain alignGPP, toPickup1GPP, scoopGPP, reversescoopGPP, backToScoreGPP, leaveGPP;
     }
 
     public static PathContainer buildPaths(
+            Pose scanPose,
             Pose startPose, Pose scoring1, Pose scoring2,
             Pose pickup1PPG, Pose pickup2PPG,
             Pose pickup1PGP, Pose pickup2PGP,
             Pose pickup1GPP, Pose pickup2GPP
     ) {
         PathContainer paths = new PathContainer();
+
+        paths.alignScan = PedroComponent.follower().pathBuilder()
+                .addPath(new BezierLine(startPose, scanPose))
+                .setLinearHeadingInterpolation(startPose.getHeading(), scanPose.getHeading())
+                .build();
+
+        paths.scanToScore = PedroComponent.follower().pathBuilder()
+                .addPath(new BezierLine(scanPose, scoring1))
+                .setLinearHeadingInterpolation(scanPose.getHeading(), scoring1.getHeading())
+                .build();
 
         paths.alignPPG = PedroComponent.follower().pathBuilder()
                 .addPath(new BezierLine(startPose, scoring1))
