@@ -69,8 +69,6 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
 
     private TelemetryManager panelsTelemetry;
     private int foundID   = 0;
-    private boolean scannedAprilAtStart = FALSE;
-
     // === Limelight ===
     private Limelight3A limelight;
 
@@ -145,8 +143,8 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             new Delay(5);
             timeout++;
         }
-        if(foundID == 0 && timeout > DETECTION_TIMEOUT)
-            foundID = PGP_TAG_ID;
+//        if(foundID == 0 && timeout > DETECTION_TIMEOUT)
+//            foundID = PGP_TAG_ID;
         log("Warning", "No tag detected – using PGP");
     }
 
@@ -195,7 +193,6 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
     public void onStartButtonPressed() {
             opmodeTimer.resetTimer();
             detectAprilTag(); // This should run before building the command
-            limelight.pipelineSwitch(DISTANCE_DETECT_PIPELINE); // Switch to pipeline 1 to focus on navigation tags 20, 24
             PedroComponent.follower().setStartingPose(getStartPose()); // Try setting starting pose again as backup after init.
             drawOnlyCurrent(PedroComponent.follower().getPose());
 
@@ -208,19 +205,16 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
 
             switch (foundID) {
                 case PPG_TAG_ID:
-                    scannedAprilAtStart = TRUE;
                     autonomousCommand = new SequentialGroup(
                             new FollowPath(alignPPG, true, .9)
                     );
                     break;
                 case PGP_TAG_ID:
-                    scannedAprilAtStart = TRUE;
                     autonomousCommand = new SequentialGroup(
                             new FollowPath(alignPGP, true, .9)
                     );
                     break;
                 case GPP_TAG_ID:
-                    scannedAprilAtStart = TRUE;
                     autonomousCommand = new SequentialGroup(
                             new FollowPath(alignGPP, true, .9)
                     );
@@ -271,12 +265,13 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                     break;
             }
             autonomousCommand.schedule();
-            detectAprilTag();
-            if(!scannedAprilAtStart) {
+            if(foundID==0) {
+                detectAprilTag();
                 new SequentialGroup(
-                        new FollowPath(scanToScore, true, .9)
+                        new FollowPath(alignScan, true, .9)
                 );
             }
+            limelight.pipelineSwitch(DISTANCE_DETECT_PIPELINE); // Switch to pipeline 1 to focus on navigation tags 20, 24
             autonomousCommand2.schedule();
     }
 
