@@ -175,7 +175,11 @@ public class TeleOpProgram extends NextFTCOpMode {
             telemetry.addData("Limelight", "No data available");
             telemetry.addData("Dynamic Flywheel Target", "%.2f", PurpleProtonRobot.dynamicFlywheelSpeed);
         }
+        if (getRuntime() >= 105) {
 
+            // Option A: A single long rumble (1 second)
+            gamepad1.rumble(1000);
+        }
         Pose pose = PedroComponent.follower().getPose();
         telemetry.addData("x", pose.getX());
         telemetry.addData("y", pose.getY());
