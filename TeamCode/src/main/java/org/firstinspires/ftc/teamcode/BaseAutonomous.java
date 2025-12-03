@@ -264,6 +264,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                     );
                     break;
             }
+            PedroComponent.follower().setStartingPose(getStartPose());
             autonomousCommand.schedule();
             if(foundID==0) {
                 detectAprilTag();
