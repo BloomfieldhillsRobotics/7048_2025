@@ -157,6 +157,71 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
         }
     }
 
+    //Command runToShoot;
+    //Command runToScan;
+    //Command AutonomousPPG;
+    //Command AutonomousPGP;
+    //Command AutonomousGPP;
+
+    private Command AutonomousPPG = new SequentialGroup(
+            getPpgShot(),
+            PurpleProtonRobot.INSTANCE.IntakeRun,
+            new FollowPath(toPickup1PPG, true, .9),
+            new FollowPath(scoopPPG, true, 0.3),
+            PurpleProtonRobot.INSTANCE.IntakeStop,
+            new FollowPath(reversescoopPPG, true, 0.9),
+            new FollowPath(backToScorePPG, true, .9),
+            getFinalShot(),
+            new FollowPath(leavePPG, true, .9)
+    );
+    private Command AutonomousPGP = new SequentialGroup(
+            getPgpShot(),
+            PurpleProtonRobot.INSTANCE.IntakeRun,
+            new FollowPath(toPickup1PGP, true, .9),
+            new FollowPath(scoopPGP, true, 0.3),
+            PurpleProtonRobot.INSTANCE.IntakeStop,
+            new FollowPath(reversescoopPGP, true, 0.9),
+            new FollowPath(backToScorePGP, true, .9),
+            getFinalShot(),
+            new FollowPath(leavePGP, true, .9)
+    );
+    private Command AutonomousGPP = new SequentialGroup(
+            getGppShot(),
+            PurpleProtonRobot.INSTANCE.IntakeRun,
+            new FollowPath(toPickup1GPP, true, .9),
+            new FollowPath(scoopGPP, true, 0.3),
+            PurpleProtonRobot.INSTANCE.IntakeStop,
+            new FollowPath(reversescoopGPP, true, 0.9),
+            new FollowPath(backToScoreGPP, true, .9),
+            getFinalShot(),
+            new FollowPath(leaveGPP, true, .9)
+    );
+
+    private Command runToShoot = new SequentialGroup(
+            new FollowPath(alignShoot, true, .9)
+    );
+    private Command runToScan = new SequentialGroup(
+            new FollowPath(alignScan, true, .9),
+            new InstantCommand(this::detectAprilTag),
+            new FollowPath(scanToScore, true, .9)
+    );
+    //PedroComponent.follower().setStartingPose(getStartPose());
+
+    private Command autonomousRoutine() {
+        return new SequentialGroup(
+                new SwitchCommand<>(() -> foundID)
+                        .withCase(PPG_TAG_ID, runToShoot)
+                        .withCase(PGP_TAG_ID, runToShoot)
+                        .withCase(GPP_TAG_ID, runToShoot)
+                        .withDefault(runToScan),
+                new SwitchCommand<>(() -> foundID)
+                        .withCase(PPG_TAG_ID, AutonomousPPG)
+                        .withCase(PGP_TAG_ID, AutonomousPGP)
+                        .withCase(GPP_TAG_ID, AutonomousGPP)
+                        .withDefault(AutonomousGPP)
+        );
+    }
+
     @Override
     public void onInit() {
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -193,68 +258,10 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             PedroComponent.follower().setStartingPose(getStartPose()); // Try setting starting pose again as backup after init.
             drawOnlyCurrent(PedroComponent.follower().getPose());
 
+            autonomousRoutine().schedule();
+
             //log("Time (s)", String.format("%.2f"));
             log("Status", "START: Running");
-
-            Command runToShoot;
-            Command runToScan;
-            Command AutonomousPPG;
-            Command AutonomousPGP;
-            Command AutonomousGPP;
-
-            AutonomousPPG = new SequentialGroup (
-                    getPpgShot(),
-                    PurpleProtonRobot.INSTANCE.IntakeRun,
-                    new FollowPath(toPickup1PPG, true, .9),
-                    new FollowPath(scoopPPG, true, 0.3),
-                    PurpleProtonRobot.INSTANCE.IntakeStop,
-                    new FollowPath(reversescoopPPG, true, 0.9),
-                    new FollowPath(backToScorePPG, true, .9),
-                    getFinalShot(),
-                    new FollowPath(leavePPG, true, .9)
-            );
-            AutonomousPGP = new SequentialGroup (
-                    getPgpShot(),
-                    PurpleProtonRobot.INSTANCE.IntakeRun,
-                    new FollowPath(toPickup1PGP, true, .9),
-                    new FollowPath(scoopPGP, true, 0.3),
-                    PurpleProtonRobot.INSTANCE.IntakeStop,
-                    new FollowPath(reversescoopPGP, true, 0.9),
-                    new FollowPath(backToScorePGP, true, .9),
-                    getFinalShot(),
-                    new FollowPath(leavePGP, true, .9)
-            );
-            AutonomousGPP = new SequentialGroup(
-                    getGppShot(),
-                    PurpleProtonRobot.INSTANCE.IntakeRun,
-                    new FollowPath(toPickup1GPP, true, .9),
-                    new FollowPath(scoopGPP, true, 0.3),
-                    PurpleProtonRobot.INSTANCE.IntakeStop,
-                    new FollowPath(reversescoopGPP, true, 0.9),
-                    new FollowPath(backToScoreGPP, true, .9),
-                    getFinalShot(),
-                    new FollowPath(leaveGPP, true, .9)
-            );
-
-            runToShoot = new SequentialGroup(
-                    new FollowPath(alignShoot, true, .9)
-            );
-            runToScan = new SequentialGroup(
-                    new FollowPath(alignScan, true, .9),
-                    new InstantCommand(this::detectAprilTag),
-                    new FollowPath(scanToScore, true,.9)
-            );
-            PedroComponent.follower().setStartingPose(getStartPose());
-            new SwitchCommand<Integer>(() -> foundID)
-                    .withCase(PPG_TAG_ID, runToShoot)
-                    .withCase(PGP_TAG_ID, runToShoot)
-                    .withCase(GPP_TAG_ID, runToShoot)
-                    .withDefault(runToScan);
-            new SwitchCommand<Integer>(() -> foundID)
-                    .withCase(PPG_TAG_ID, AutonomousPPG)
-                    .withCase(PGP_TAG_ID, AutonomousPGP)
-                    .withCase(GPP_TAG_ID, AutonomousGPP)
-                    .withDefault(AutonomousGPP);
     }
 
     @Override
