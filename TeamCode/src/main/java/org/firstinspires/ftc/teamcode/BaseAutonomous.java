@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.geometry.Pose;
@@ -18,8 +15,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Drawing;
 import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
 import java.util.List;
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.conditionals.SwitchCommand;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
@@ -74,9 +73,9 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
 
     // === Path Chains ===
     private PathChain alignScan, scanToScore;
-    private PathChain alignPPG, toPickup1PPG, scoopPPG, reversescoopPPG, backToScorePPG, leavePPG;
-    private PathChain alignPGP, toPickup1PGP, scoopPGP, reversescoopPGP, backToScorePGP, leavePGP;
-    private PathChain alignGPP, toPickup1GPP, scoopGPP, reversescoopGPP, backToScoreGPP, leaveGPP;
+    private PathChain alignShoot, toPickup1PPG, scoopPPG, reversescoopPPG, backToScorePPG, leavePPG;
+    private PathChain toPickup1PGP, scoopPGP, reversescoopPGP, backToScorePGP, leavePGP;
+    private PathChain toPickup1GPP, scoopGPP, reversescoopGPP, backToScoreGPP, leaveGPP;
 
     // === Timer Class ===
     public static class Timer {
@@ -100,7 +99,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                 getPickup1PGPPose(), getPickup2PGPPose(),
                 getPickup1GPPPose(), getPickup2GPPPose()
         );
-        alignPPG = paths.alignPPG;
+        alignShoot = paths.alignShoot;
         scanToScore = paths.scanToScore;
         alignScan = paths.alignScan;
         toPickup1PPG = paths.toPickup1PPG;
@@ -108,13 +107,11 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
         reversescoopPPG = paths.reversescoopPPG;
         backToScorePPG = paths.backToScorePPG;
         leavePPG = paths.leavePPG;
-        alignPGP = paths.alignPGP;
         toPickup1PGP = paths.toPickup1PGP;
         scoopPGP = paths.scoopPGP;
         reversescoopPGP = paths.reversescoopPGP;
         backToScorePGP = paths.backToScorePGP;
         leavePGP = paths.leavePGP;
-        alignGPP = paths.alignGPP;
         toPickup1GPP = paths.toPickup1GPP;
         scoopGPP = paths.scoopGPP;
         reversescoopGPP = paths.reversescoopGPP;
@@ -199,81 +196,65 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             //log("Time (s)", String.format("%.2f"));
             log("Status", "START: Running");
 
-            Command autonomousCommand;
-            Command autonomousCommand2;
-            PathChain finalAlignPath = null;
+            Command runToShoot;
+            Command runToScan;
+            Command AutonomousPPG;
+            Command AutonomousPGP;
+            Command AutonomousGPP;
 
-            switch (foundID) {
-                case PPG_TAG_ID:
-                    autonomousCommand = new SequentialGroup(
-                            new FollowPath(alignPPG, true, .9)
-                    );
-                    break;
-                case PGP_TAG_ID:
-                    autonomousCommand = new SequentialGroup(
-                            new FollowPath(alignPGP, true, .9)
-                    );
-                    break;
-                case GPP_TAG_ID:
-                    autonomousCommand = new SequentialGroup(
-                            new FollowPath(alignGPP, true, .9)
-                    );
-                default: // go to scan position
-                    autonomousCommand = new SequentialGroup(
-                            new FollowPath(alignScan, true, .9)
-                    );
-                    break;
-            }
-            switch (foundID) {
-                case PPG_TAG_ID:
-                    autonomousCommand2 = new SequentialGroup (
-                        getPpgShot(),
-                        PurpleProtonRobot.INSTANCE.IntakeRun,
-                        new FollowPath(toPickup1PPG, true, .9),
-                        new FollowPath(scoopPPG, true, 0.3),
-                        PurpleProtonRobot.INSTANCE.IntakeStop,
-                        new FollowPath(reversescoopPPG, true, 0.9),
-                        new FollowPath(backToScorePPG, true, .9),
-                        getFinalShot(),
-                        new FollowPath(leavePPG, true, .9)
-                    );
-                case PGP_TAG_ID:
-                    autonomousCommand2 = new SequentialGroup (
-                        getPgpShot(),
-                        PurpleProtonRobot.INSTANCE.IntakeRun,
-                        new FollowPath(toPickup1PGP, true, .9),
-                        new FollowPath(scoopPGP, true, 0.3),
-                        PurpleProtonRobot.INSTANCE.IntakeStop,
-                        new FollowPath(reversescoopPGP, true, 0.9),
-                        new FollowPath(backToScorePGP, true, .9),
-                        getFinalShot(),
-                        new FollowPath(leavePGP, true, .9)
-                    );
-                case GPP_TAG_ID:
-                default:
-                    autonomousCommand2 = new SequentialGroup(
-                        getGppShot(),
-                        PurpleProtonRobot.INSTANCE.IntakeRun,
-                        new FollowPath(toPickup1GPP, true, .9),
-                        new FollowPath(scoopGPP, true, 0.3),
-                        PurpleProtonRobot.INSTANCE.IntakeStop,
-                        new FollowPath(reversescoopGPP, true, 0.9),
-                        new FollowPath(backToScoreGPP, true, .9),
-                        getFinalShot(),
-                        new FollowPath(leaveGPP, true, .9)
-                    );
-                    break;
-            }
+            AutonomousPPG = new SequentialGroup (
+                    getPpgShot(),
+                    PurpleProtonRobot.INSTANCE.IntakeRun,
+                    new FollowPath(toPickup1PPG, true, .9),
+                    new FollowPath(scoopPPG, true, 0.3),
+                    PurpleProtonRobot.INSTANCE.IntakeStop,
+                    new FollowPath(reversescoopPPG, true, 0.9),
+                    new FollowPath(backToScorePPG, true, .9),
+                    getFinalShot(),
+                    new FollowPath(leavePPG, true, .9)
+            );
+            AutonomousPGP = new SequentialGroup (
+                    getPgpShot(),
+                    PurpleProtonRobot.INSTANCE.IntakeRun,
+                    new FollowPath(toPickup1PGP, true, .9),
+                    new FollowPath(scoopPGP, true, 0.3),
+                    PurpleProtonRobot.INSTANCE.IntakeStop,
+                    new FollowPath(reversescoopPGP, true, 0.9),
+                    new FollowPath(backToScorePGP, true, .9),
+                    getFinalShot(),
+                    new FollowPath(leavePGP, true, .9)
+            );
+            AutonomousGPP = new SequentialGroup(
+                    getGppShot(),
+                    PurpleProtonRobot.INSTANCE.IntakeRun,
+                    new FollowPath(toPickup1GPP, true, .9),
+                    new FollowPath(scoopGPP, true, 0.3),
+                    PurpleProtonRobot.INSTANCE.IntakeStop,
+                    new FollowPath(reversescoopGPP, true, 0.9),
+                    new FollowPath(backToScoreGPP, true, .9),
+                    getFinalShot(),
+                    new FollowPath(leaveGPP, true, .9)
+            );
+
+            runToShoot = new SequentialGroup(
+                    new FollowPath(alignShoot, true, .9)
+            );
+            runToScan = new SequentialGroup(
+                    new FollowPath(alignScan, true, .9),
+                    new InstantCommand(this::detectAprilTag),
+                    new FollowPath(scanToScore, true,.9)
+            );
             PedroComponent.follower().setStartingPose(getStartPose());
-            autonomousCommand.schedule();
-            if(foundID==0) {
-                detectAprilTag();
-                new SequentialGroup(
-                        new FollowPath(alignScan, true, .9)
-                );
-            }
-            limelight.pipelineSwitch(DISTANCE_DETECT_PIPELINE); // Switch to pipeline 1 to focus on navigation tags 20, 24
-            autonomousCommand2.schedule();
+            new SwitchCommand<Integer>(() -> foundID)
+                    .withCase(PPG_TAG_ID, runToShoot)
+                    .withCase(PGP_TAG_ID, runToShoot)
+                    .withCase(GPP_TAG_ID, runToShoot)
+                    .withDefault(runToScan);
+            new SwitchCommand<Integer>(() -> foundID)
+                    .withCase(PPG_TAG_ID, AutonomousPPG)
+                    .withCase(PGP_TAG_ID, AutonomousPGP)
+                    .withCase(GPP_TAG_ID, AutonomousGPP)
+                    .withDefault(AutonomousGPP);
     }
 
     @Override
