@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.subsystems.Drawing;
 import org.firstinspires.ftc.teamcode.subsystems.PurpleProtonRobot;
 import java.util.List;
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.conditionals.SwitchCommand;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
@@ -201,6 +200,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             Command AutonomousPPG;
             Command AutonomousPGP;
             Command AutonomousGPP;
+            Command AutonomousRoutine1;
 
             AutonomousPPG = new SequentialGroup (
                     getPpgShot(),
@@ -244,17 +244,21 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                     new InstantCommand(this::detectAprilTag),
                     new FollowPath(scanToScore, true,.9)
             );
+            AutonomousRoutine1 =
+                    new SequentialGroup(
+                            new SwitchCommand<>(() -> foundID)
+                                .withCase(PPG_TAG_ID, runToShoot)
+                                .withCase(PGP_TAG_ID, runToShoot)
+                                .withCase(GPP_TAG_ID, runToShoot)
+                                .withDefault(runToScan),
+                        new SwitchCommand<>(() -> foundID)
+                                .withCase(PPG_TAG_ID, AutonomousPPG)
+                                .withCase(PGP_TAG_ID, AutonomousPGP)
+                                .withCase(GPP_TAG_ID, AutonomousGPP)
+                                .withDefault(AutonomousGPP)
+                );
             PedroComponent.follower().setStartingPose(getStartPose());
-            new SwitchCommand<Integer>(() -> foundID)
-                    .withCase(PPG_TAG_ID, runToShoot)
-                    .withCase(PGP_TAG_ID, runToShoot)
-                    .withCase(GPP_TAG_ID, runToShoot)
-                    .withDefault(runToScan);
-            new SwitchCommand<Integer>(() -> foundID)
-                    .withCase(PPG_TAG_ID, AutonomousPPG)
-                    .withCase(PGP_TAG_ID, AutonomousPGP)
-                    .withCase(GPP_TAG_ID, AutonomousGPP)
-                    .withDefault(AutonomousGPP);
+            AutonomousRoutine1.schedule();
     }
 
     @Override
