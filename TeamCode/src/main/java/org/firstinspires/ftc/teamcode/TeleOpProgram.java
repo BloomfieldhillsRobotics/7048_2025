@@ -171,7 +171,7 @@ public class TeleOpProgram extends NextFTCOpMode {
 
 
         } else {
-            PurpleProtonRobot.dynamicFlywheelSpeed = 1600;
+            PurpleProtonRobot.dynamicFlywheelSpeed = 1300;
             telemetry.addData("Limelight", "No data available");
             telemetry.addData("Dynamic Flywheel Target", "%.2f", PurpleProtonRobot.dynamicFlywheelSpeed);
         }
