@@ -61,7 +61,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
     private static final int GPP_TAG_ID = 21;
     private static final int SEQUENCE_DETECT_PIPELINE = 0;
     private static final int DISTANCE_DETECT_PIPELINE = 1;
-    private static final int DETECTION_TIMEOUT = 1000;
+    private static final int DETECTION_TIMEOUT = 1500;
 
     // === Pathing ===
 
@@ -179,7 +179,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
     @Override
     public void onWaitForStart() {
         PedroComponent.follower().setStartingPose(getStartPose());
-        //new Delay(1);
+        new Delay(1);
         log("Starting pose", getStartPose());
         log("Current pose", PedroComponent.follower().getPose());
         log("Status", "INIT_LOOP: Press START");
@@ -243,6 +243,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
             );
             runToScan = new SequentialGroup(
                     new FollowPath(alignScan, true, .9),
+                    new Delay(0.5),
                     new InstantCommand(this::detectAprilTag),
                     new FollowPath(scanToScore, true,.9)
             );

@@ -42,7 +42,7 @@ public class PurpleProtonRobot extends SubsystemGroup {
             new SequentialGroup(
                     Elevator.INSTANCE.down,
                     Intake.INSTANCE.run,
-                    new Delay(.5),
+                    new Delay(.8),
                     Intake.INSTANCE.stop
             ).named("IntakeSeq");
     public final Command BaseLock =
