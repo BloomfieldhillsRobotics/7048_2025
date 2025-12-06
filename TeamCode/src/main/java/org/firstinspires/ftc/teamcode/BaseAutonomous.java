@@ -257,7 +257,7 @@ public abstract class BaseAutonomous extends NextFTCOpMode {
                         new SwitchCommand<>(() -> foundID)
                                 .withCase(PPG_TAG_ID, AutonomousPPG)
                                 .withCase(PGP_TAG_ID, AutonomousPGP)
-                                .withCase(GPP_TAG_ID, AutonomousGPP)
+                               // .withCase(GPP_TAG_ID, AutonomousGPP)
                                 .withDefault(AutonomousGPP)
                 );
             PedroComponent.follower().setStartingPose(getStartPose());
