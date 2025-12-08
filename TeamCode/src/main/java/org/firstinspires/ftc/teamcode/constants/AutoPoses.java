@@ -20,8 +20,7 @@ public class AutoPoses {
         public static final Pose startPose = new Pose(122, 132, Math.toRadians(225));
         public static final Pose scanPose = new Pose(72,100, Math.toRadians(90));
         public static final Pose scoring1 = new Pose(100, 99, Math.toRadians(45));
-        //public static final Pose scoring2 = new Pose(96, 49, Math.toRadians(45));
-        public static final Pose scoring2 = new Pose(100, 84, Math.toRadians(45));
+        public static final Pose scoring2 = new Pose(96, 49, Math.toRadians(45));
         public static final Pose pickup1PPG = new Pose(100, 84, Math.toRadians(0));
         public static final Pose pickup2PPG = new Pose(124, 84, Math.toRadians(0));
         public static final Pose pickup1PGP = new Pose(100, 60, Math.toRadians(0));
